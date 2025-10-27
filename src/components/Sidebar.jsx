@@ -17,7 +17,9 @@ import {
   FileText,
   Bell,
   User,
-  TrendingUp
+  TrendingUp,
+  Search,
+  DollarSign
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { toast } from 'react-hot-toast';
@@ -55,6 +57,18 @@ const Sidebar = ({
       description: 'Trang chính của ứng dụng'
     },
     {
+      id: 'registration',
+      label: 'Đăng ký môn học',
+      icon: BookOpen,
+      description: 'Đăng ký và quản lý các môn học'
+    },
+    {
+      id: 'schedule',
+      label: 'Lịch học',
+      icon: Calendar,
+      description: 'Xem lịch học trong tuần'
+    },
+    {
       id: 'classes',
       label: 'Xem lớp học',
       icon: BookOpen,
@@ -89,6 +103,18 @@ const Sidebar = ({
       label: 'Theo dõi tiến độ học',
       icon: TrendingUp,
       description: 'Theo dõi tiến độ học tập và thành tích'
+    },
+    {
+      id: 'lookup',
+      label: 'Tra cứu',
+      icon: Search,
+      description: 'Tra cứu thông tin khoa, ngành, môn học'
+    },
+    {
+      id: 'tuition',
+      label: 'Học phí',
+      icon: DollarSign,
+      description: 'Xem và thanh toán học phí'
     }
   ];
 
@@ -269,16 +295,7 @@ const Sidebar = ({
                 )}
               </div>
             )}
-
-            {/* Status Section */}
-            <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
-              <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-950/30 rounded-lg">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm font-medium text-green-700 dark:text-green-300">
-                  Đang học
-                </span>
-              </div>
-            </div>
+    
           </div>
         </div>
       </aside>

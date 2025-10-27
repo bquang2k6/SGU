@@ -38,17 +38,56 @@ const ProfilePage = () => {
   });
 
   useEffect(() => {
-    // Lấy thông tin user từ localStorage
-    const savedUser = AuthStorage.getCurrentUser();
-    if (savedUser) {
-      setUserInfo(prev => ({
-        ...prev,
-        ...savedUser,
-        fullName: savedUser.fullName || savedUser.full_name
-      }));
-    }
-    setLoading(false);
+    fetchProfileData();
   }, []);
+
+  const fetchProfileData = async () => {
+    try {
+      setLoading(true);
+      const result = await userService.getStudentProfile();
+      if (result.success && result.data) {
+        const profileData = result.data;
+        setUserInfo(prev => ({
+          ...prev,
+          id: profileData.studentId,
+          studentId: profileData.studentCode,
+          fullName: profileData.user?.fullName || profileData.fullName,
+          email: profileData.user?.email,
+          phone: profileData.user?.phone,
+          dateOfBirth: profileData.dateOfBirth,
+          address: profileData.user?.address,
+          major: profileData.studentClass?.major?.majorName,
+          class: profileData.studentClass?.className,
+          year: profileData.enrollmentYear,
+          gpa: profileData.gpa,
+          totalCredits: profileData.totalCredits
+        }));
+      } else {
+        // Fallback to localStorage if API fails
+        const savedUser = AuthStorage.getCurrentUser();
+        if (savedUser) {
+          setUserInfo(prev => ({
+            ...prev,
+            ...savedUser,
+            fullName: savedUser.fullName || savedUser.full_name
+          }));
+        }
+      }
+    } catch (error) {
+      console.error('Lỗi tải profile:', error);
+      // Fallback to localStorage
+      const savedUser = AuthStorage.getCurrentUser();
+      if (savedUser) {
+        setUserInfo(prev => ({
+          ...prev,
+          ...savedUser,
+          fullName: savedUser.fullName || savedUser.full_name
+        }));
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleInputChange = (field, value) => {
     setUserInfo(prev => ({
@@ -66,8 +105,8 @@ const ProfilePage = () => {
 
   const handleSaveProfile = async () => {
     try {
-      const result = await userService.updateUser(userInfo.id, {
-        full_name: userInfo.fullName,
+      const result = await userService.updateProfile({
+        fullName: userInfo.fullName,
         email: userInfo.email,
         phone: userInfo.phone
       });

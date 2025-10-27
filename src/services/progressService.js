@@ -1,11 +1,23 @@
 import { API_ENDPOINTS } from '../config/api';
 import { apiService } from './apiService';
+import { AuthStorage } from '../types/user'; // 👈 Thêm dòng này
 
 class ProgressService {
-  // Lấy danh sách khóa học có thể đăng ký
-  async getAvailableCourses(studentId) {
+  // Lấy username từ localStorage
+  getUsername() {
+    const user = AuthStorage.getCurrentUser();
+    return user?.username || null;
+  }
+
+  // ✅ Lấy danh sách khóa học có thể đăng ký
+  async getAvailableCourses() {
+    const username = this.getUsername(); // 👈 Tự động lấy username
+    if (!username) {
+      return { success: false, message: 'Không tìm thấy username trong localStorage', data: [] };
+    }
+
     try {
-      const response = await apiService.get(API_ENDPOINTS.AVAILABLE_COURSES(studentId));
+      const response = await apiService.get(API_ENDPOINTS.AVAILABLE_COURSES(username));
       return {
         success: true,
         data: response.courses || []
@@ -20,11 +32,16 @@ class ProgressService {
     }
   }
 
-  // Kiểm tra điều kiện tiên quyết
-  async checkPrerequisites(studentId, subjectId) {
+  // ✅ Kiểm tra điều kiện tiên quyết
+  async checkPrerequisites(subjectId) {
+    const username = this.getUsername();
+    if (!username) {
+      return { success: false, message: 'Không tìm thấy username trong localStorage', data: null };
+    }
+
     try {
       const response = await apiService.post(API_ENDPOINTS.CHECK_PREREQUISITES, {
-        studentId,
+        studentId: username,
         subjectId
       });
       return {
@@ -44,7 +61,7 @@ class ProgressService {
     }
   }
 
-  // Lấy thông tin học phí
+  // ✅ Lấy thông tin học phí
   async getTuitionFees() {
     try {
       const response = await apiService.get(API_ENDPOINTS.TUITION_FEES);

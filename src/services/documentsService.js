@@ -28,7 +28,7 @@ class DocumentsService {
         success: true,
         message: response.message || 'Tạo yêu cầu tài liệu thành công',
         data: {
-          id: response.id
+          requestId: response.requestId
         }
       };
     } catch (error) {
@@ -36,6 +36,42 @@ class DocumentsService {
       return {
         success: false,
         message: error.message || 'Có lỗi xảy ra khi tạo yêu cầu tài liệu'
+      };
+    }
+  }
+
+  // Lấy yêu cầu tài liệu của sinh viên
+  async getMyDocumentRequests() {
+    try {
+      const response = await apiService.get(API_ENDPOINTS.MY_DOCUMENT_REQUESTS);
+      return {
+        success: true,
+        data: response.documentRequests || []
+      };
+    } catch (error) {
+      console.error('Get my document requests error:', error);
+      return {
+        success: false,
+        message: error.message || 'Có lỗi xảy ra khi lấy yêu cầu tài liệu',
+        data: []
+      };
+    }
+  }
+
+  // Lấy danh sách loại tài liệu có thể yêu cầu
+  async getDocumentTypes() {
+    try {
+      const response = await apiService.get(API_ENDPOINTS.DOCUMENT_TYPES);
+      return {
+        success: true,
+        data: response.documentTypes || []
+      };
+    } catch (error) {
+      console.error('Get document types error:', error);
+      return {
+        success: false,
+        message: error.message || 'Có lỗi xảy ra khi lấy danh sách loại tài liệu',
+        data: []
       };
     }
   }

@@ -36,6 +36,24 @@ class NotificationsService {
       };
     }
   }
+
+  // Lấy tất cả thông báo của sinh viên
+  async getMyNotifications() {
+    try {
+      const response = await apiService.get(API_ENDPOINTS.MY_NOTIFICATIONS);
+      return {
+        success: true,
+        data: response.notifications || []
+      };
+    } catch (error) {
+      console.error('Get my notifications error:', error);
+      return {
+        success: false,
+        message: error.message || 'Có lỗi xảy ra khi lấy danh sách thông báo',
+        data: []
+      };
+    }
+  }
 }
 
 export const notificationsService = new NotificationsService();

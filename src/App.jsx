@@ -9,6 +9,10 @@ import DocumentsPage from './pages/DocumentsPage';
 import NotificationsPage from './pages/NotificationsPage';
 import ProfilePage from './pages/ProfilePage';
 import ProgressPage from './pages/ProgressPage';
+import RegistrationPage from './pages/RegistrationPage';
+import LookupPage from './pages/LookupPage';
+import SchedulePage from './pages/SchedulePage';
+import TuitionPage from './pages/TuitionPage';
 import { authService } from './services/authService';
 
 function App() {
@@ -56,6 +60,14 @@ function App() {
         return <ProfilePage />;
       case 'progress':
         return <ProgressPage />;
+      case 'registration':
+        return <RegistrationPage />;
+      case 'lookup':
+        return <LookupPage />;
+      case 'schedule':
+        return <SchedulePage />;
+      case 'tuition':
+        return <TuitionPage />;
       default:
         return <HomePage />;
     }
@@ -77,6 +89,14 @@ function App() {
         return 'Thông tin cá nhân';
       case 'progress':
         return 'Tiến độ học';
+      case 'registration':
+        return 'Đăng ký môn học';
+      case 'lookup':
+        return 'Tra cứu';
+      case 'schedule':
+        return 'Lịch học';
+      case 'tuition':
+        return 'Học phí';
       default:
         return 'Student';
     }

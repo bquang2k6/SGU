@@ -45,14 +45,14 @@ const GradesPage = () => {
       return { gpa: 0, totalCredits: 0, completedCredits: 0, averageGrade: 0 };
     }
 
-    const totalCredits = grades.reduce((sum, grade) => sum + (grade.credits || 0), 0);
-    const completedCredits = grades.filter(grade => grade.isPassed).reduce((sum, grade) => sum + (grade.credits || 0), 0);
-    const averageGrade = grades.reduce((sum, grade) => sum + (grade.averageScore || 0), 0) / grades.length;
+    const totalCredits = grades.reduce((sum, grade) => sum + (grade.subject?.credits || 0), 0);
+    const completedCredits = grades.filter(grade => grade.isPassed).reduce((sum, grade) => sum + (grade.subject?.credits || 0), 0);
+    const averageGrade = grades.reduce((sum, grade) => sum + (grade.totalScore || 0), 0) / grades.length;
     
-    // Tính GPA (giả sử thang điểm 4.0)
+    // Tính GPA từ gradePoints
     const gpa = grades.reduce((sum, grade) => {
-      const gradePoint = grade.gradePoint || 0;
-      const credits = grade.credits || 0;
+      const gradePoint = grade.gradePoints || 0;
+      const credits = grade.subject?.credits || 0;
       return sum + (gradePoint * credits);
     }, 0) / totalCredits;
 
@@ -185,9 +185,9 @@ const GradesPage = () => {
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="space-y-1">
-                      <CardTitle className="text-lg">{subject.subject || subject.subjectName}</CardTitle>
+                      <CardTitle className="text-lg">{subject.subject?.subjectName || subject.subjectName}</CardTitle>
                       <CardDescription className="text-sm">
-                        {subject.courseClass} • {subject.semester}
+                        {subject.courseClass?.courseName || subject.courseClass} • {subject.semester?.semesterName || subject.semester}
                       </CardDescription>
                     </div>
                     <Badge className={getGradeBadgeColor(subject.letterGrade)}>
@@ -197,13 +197,13 @@ const GradesPage = () => {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Điểm trung bình</span>
-                    <span className={`text-2xl font-bold ${getGradeColor(subject.averageScore)}`}>
-                      {subject.averageScore}
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Điểm tổng kết</span>
+                    <span className={`text-2xl font-bold ${getGradeColor(subject.totalScore)}`}>
+                      {subject.totalScore?.toFixed(1) || 'N/A'}
                     </span>
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
-                    {subject.semester}
+                    {subject.semester?.semesterName || subject.semester}
                   </div>
                   <div className="flex items-center justify-between pt-2 border-t border-gray-200 dark:border-gray-700">
                     <span className="text-sm text-gray-600 dark:text-gray-400">Xem chi tiết</span>
@@ -230,15 +230,15 @@ const GradesPage = () => {
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <h3 className="font-semibold text-gray-900 dark:text-white">
-                          {subject.name} ({subject.code})
+                          {subject.subject?.subjectName || subject.subjectName} ({subject.subject?.subjectCode || subject.subjectCode})
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {subject.semester}
+                          {subject.semester?.semesterName || subject.semester}
                         </p>
                       </div>
                       <div className="text-right">
-                        <div className={`text-2xl font-bold ${getGradeColor(subject.finalGrade)}`}>
-                          {subject.finalGrade}
+                        <div className={`text-2xl font-bold ${getGradeColor(subject.totalScore)}`}>
+                          {subject.totalScore?.toFixed(1) || 'N/A'}
                         </div>
                         <Badge className={getGradeBadgeColor(subject.letterGrade)}>
                           {subject.letterGrade}
@@ -296,12 +296,12 @@ const GradesPage = () => {
                   </thead>
                   <tbody>
                     {subjects.map((subject) => (
-                      <tr key={subject.id} className="border-b border-gray-200 dark:border-gray-700">
-                        <td className="py-3 px-4 text-gray-900 dark:text-white">{subject.name}</td>
-                        <td className="py-3 px-4 text-gray-600 dark:text-gray-400">{subject.code}</td>
-                        <td className="py-3 px-4 text-gray-600 dark:text-gray-400">{subject.credits}</td>
-                        <td className={`py-3 px-4 font-semibold ${getGradeColor(subject.finalGrade)}`}>
-                          {subject.finalGrade}
+                      <tr key={subject.gradeId || subject.id} className="border-b border-gray-200 dark:border-gray-700">
+                        <td className="py-3 px-4 text-gray-900 dark:text-white">{subject.subject?.subjectName || subject.subjectName}</td>
+                        <td className="py-3 px-4 text-gray-600 dark:text-gray-400">{subject.subject?.subjectCode || subject.subjectCode}</td>
+                        <td className="py-3 px-4 text-gray-600 dark:text-gray-400">{subject.subject?.credits || subject.credits}</td>
+                        <td className={`py-3 px-4 font-semibold ${getGradeColor(subject.totalScore)}`}>
+                          {subject.totalScore?.toFixed(1) || 'N/A'}
                         </td>
                         <td className="py-3 px-4">
                           <Badge className={getGradeBadgeColor(subject.letterGrade)}>
@@ -325,8 +325,8 @@ const GradesPage = () => {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>{selectedSubject.name}</CardTitle>
-                  <CardDescription>{selectedSubject.code} • {selectedSubject.semester}</CardDescription>
+                  <CardTitle>{selectedSubject.subject?.subjectName || selectedSubject.subjectName}</CardTitle>
+                  <CardDescription>{selectedSubject.subject?.subjectCode || selectedSubject.subjectCode} • {selectedSubject.semester?.semesterName || selectedSubject.semester}</CardDescription>
                 </div>
                 <Button 
                   variant="ghost" 
@@ -341,43 +341,42 @@ const GradesPage = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Tín chỉ</label>
-                  <p className="text-gray-900 dark:text-white">{selectedSubject.credits}</p>
+                  <p className="text-gray-900 dark:text-white">{selectedSubject.subject?.credits || selectedSubject.credits}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Điểm cuối kỳ</label>
-                  <p className={`text-2xl font-bold ${getGradeColor(selectedSubject.finalGrade)}`}>
-                    {selectedSubject.finalGrade}
+                  <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Điểm tổng kết</label>
+                  <p className={`text-2xl font-bold ${getGradeColor(selectedSubject.totalScore)}`}>
+                    {selectedSubject.totalScore?.toFixed(1) || 'N/A'}
                   </p>
                 </div>
               </div>
               <div>
                 <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Chi tiết điểm</label>
                 <div className="mt-2 space-y-2">
-                {Array.isArray(selectedSubject.grades) && selectedSubject.grades.length > 0 ? (
-                  selectedSubject.grades.map((grade, index) => (
-                    <div key={index} className="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-800 rounded">
-                      <div className="flex items-center space-x-3">
-                        <span className="font-medium text-gray-900 dark:text-white">
-                          {grade.type}
-                        </span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          ({grade.weight}%)
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <span className={`font-semibold ${getGradeColor(grade.score)}`}>
-                          {grade.score}/{grade.maxScore}
-                        </span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {grade.date}
-                        </span>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-gray-500 text-sm">Không có chi tiết điểm cho môn học này</p>
-                )}
-
+                  <div className="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-800 rounded">
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">Điểm chuyên cần</span>
+                    <span className={`font-semibold ${getGradeColor(selectedSubject.attendanceScore)}`}>
+                      {selectedSubject.attendanceScore?.toFixed(1) || 'N/A'}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-800 rounded">
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">Điểm bài tập</span>
+                    <span className={`font-semibold ${getGradeColor(selectedSubject.assignmentScore)}`}>
+                      {selectedSubject.assignmentScore?.toFixed(1) || 'N/A'}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-800 rounded">
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">Điểm giữa kỳ</span>
+                    <span className={`font-semibold ${getGradeColor(selectedSubject.midtermScore)}`}>
+                      {selectedSubject.midtermScore?.toFixed(1) || 'N/A'}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-800 rounded">
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">Điểm cuối kỳ</span>
+                    <span className={`font-semibold ${getGradeColor(selectedSubject.finalScore)}`}>
+                      {selectedSubject.finalScore?.toFixed(1) || 'N/A'}
+                    </span>
+                  </div>
                 </div>
               </div>
             </CardContent>

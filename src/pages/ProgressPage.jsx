@@ -33,6 +33,27 @@ const ProgressPage = () => {
   });
   const [availableCourses, setAvailableCourses] = useState([]);
   const [tuitionFees, setTuitionFees] = useState([]);
+  const [goals, setGoals] = useState([
+    {
+      id: 1,
+      title: 'Hoàn thành 100% tín chỉ',
+      description: 'Đăng ký và hoàn thành toàn bộ tín chỉ theo kế hoạch học tập',
+      progress: 75,
+      target: 100,
+      status: 'in_progress',
+      deadline: '2025-06-30',
+    },
+    {
+      id: 2,
+      title: 'Đạt GPA 8.5+',
+      description: 'Duy trì điểm trung bình tích lũy trên 8.5',
+      progress: 80,
+      target: 100,
+      status: 'in_progress',
+      deadline: '2025-12-31',
+    },
+  ]);
+  
 
   useEffect(() => {
     fetchProgressData();

@@ -58,6 +58,16 @@ class AuthService {
 
   async logout() {
     try {
+      // Gọi API logout trước khi xóa local storage
+      const response = await fetch(API_ENDPOINTS.LOGOUT, {
+        method: 'POST',
+        headers: this.getAuthHeaders()
+      });
+
+      if (!response.ok) {
+        console.warn('Logout API call failed, but continuing with local logout');
+      }
+
       // Xóa thông tin user và session key
       AuthStorage.logout();
       localStorage.removeItem('sgu_session_key');
@@ -68,9 +78,13 @@ class AuthService {
       };
     } catch (error) {
       console.error('Logout error:', error);
+      // Vẫn xóa local storage ngay cả khi API call thất bại
+      AuthStorage.logout();
+      localStorage.removeItem('sgu_session_key');
+      
       return {
-        success: false,
-        message: 'Có lỗi xảy ra khi đăng xuất'
+        success: true,
+        message: 'Đăng xuất thành công'
       };
     }
   }
@@ -111,6 +125,41 @@ class AuthService {
 
   isAuthenticated() {
     return AuthStorage.isLoggedIn() && this.getSessionKey() !== null;
+  }
+
+  async checkSession() {
+    try {
+      const response = await fetch(API_ENDPOINTS.CHECK_SESSION, {
+        method: 'GET',
+        headers: this.getAuthHeaders()
+      });
+
+      if (!response.ok) {
+        // Session không hợp lệ, xóa thông tin local
+        AuthStorage.logout();
+        localStorage.removeItem('sgu_session_key');
+        return {
+          success: false,
+          isValid: false,
+          message: 'Session không hợp lệ'
+        };
+      }
+
+      const data = await response.json();
+      return {
+        success: true,
+        isValid: data.isValid,
+        user: data.user,
+        message: data.isValid ? 'Session hợp lệ' : 'Session không hợp lệ'
+      };
+    } catch (error) {
+      console.error('Check session error:', error);
+      return {
+        success: false,
+        isValid: false,
+        message: 'Có lỗi xảy ra khi kiểm tra session'
+      };
+    }
   }
 
   getAuthHeaders() {

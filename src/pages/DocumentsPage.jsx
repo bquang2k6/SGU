@@ -10,6 +10,7 @@ import { toast } from 'react-hot-toast';
 const DocumentsPage = () => {
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [myRequests, setMyRequests] = useState([]);
+  const [documentTypes, setDocumentTypes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [createForm, setCreateForm] = useState({
@@ -20,44 +21,27 @@ const DocumentsPage = () => {
     studentIds: []
   });
 
-  // Mock data cho document types (có thể lấy từ API khác)
-  const documentTypes = [
-    {
-      id: 'DT001',
-      name: 'Giấy chứng nhận sinh viên',
-      description: 'Giấy chứng nhận tư cách sinh viên đang học tại trường',
-      required: true,
-      processingTime: '3-5 ngày làm việc',
-      fee: 0,
-      status: 'available'
-    },
-    {
-      id: 'DT002',
-      name: 'Bảng điểm',
-      description: 'Bảng điểm chính thức của sinh viên',
-      required: false,
-      processingTime: '5-7 ngày làm việc',
-      fee: 50000,
-      status: 'available'
-    }
-  ];
-
   useEffect(() => {
-    fetchDocumentRequests();
+    fetchData();
   }, []);
 
-  const fetchDocumentRequests = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
-      const result = await documentsService.getDocumentRequests();
-      if (result.success) {
-        setMyRequests(result.data);
-      } else {
-        console.error('Lỗi tải yêu cầu tài liệu:', result.message);
-        toast.error('Không thể tải danh sách yêu cầu tài liệu');
+      const [requestsResult, typesResult] = await Promise.all([
+        documentsService.getMyDocumentRequests(),
+        documentsService.getDocumentTypes()
+      ]);
+
+      if (requestsResult.success) {
+        setMyRequests(requestsResult.data);
+      }
+
+      if (typesResult.success) {
+        setDocumentTypes(typesResult.data);
       }
     } catch (error) {
-      console.error('Lỗi tải yêu cầu tài liệu:', error);
+      console.error('Lỗi tải dữ liệu:', error);
       toast.error('Có lỗi xảy ra khi tải dữ liệu');
     } finally {
       setLoading(false);
@@ -82,7 +66,7 @@ const DocumentsPage = () => {
           purpose: '',
           studentIds: []
         });
-        fetchDocumentRequests(); // Refresh danh sách
+        fetchData(); // Refresh danh sách
       } else {
         toast.error(result.message);
       }
@@ -159,7 +143,7 @@ const DocumentsPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {documentTypes.map((docType) => (
               <Card 
-                key={docType.id} 
+                key={docType.documentTypeId || docType.id} 
                 className="hover:shadow-lg transition-shadow cursor-pointer"
                 onClick={() => setSelectedDocument(docType)}
               >
@@ -171,29 +155,24 @@ const DocumentsPage = () => {
                         {docType.description}
                       </CardDescription>
                     </div>
-                    <Badge className={getStatusColor(docType.status)}>
-                      {docType.status === 'available' ? 'Có sẵn' : docType.status}
+                    <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                      Có sẵn
                     </Badge>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600 dark:text-gray-400">Thời gian xử lý:</span>
-                    <span className="text-gray-900 dark:text-white">{docType.processingTime}</span>
+                    <span className="text-gray-900 dark:text-white">{docType.processingDays} ngày</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600 dark:text-gray-400">Phí:</span>
+                    <span className="text-gray-600 dark:text-gray-400">Số lượng tối đa:</span>
                     <span className="text-gray-900 dark:text-white">
-                      {docType.fee === 0 ? 'Miễn phí' : `${docType.fee.toLocaleString()} VNĐ`}
+                      {docType.maxRequestsPerSemester || 'Không giới hạn'}
                     </span>
                   </div>
-                  {docType.required && (
-                    <Badge variant="outline" className="text-red-600 border-red-600">
-                      Bắt buộc
-                    </Badge>
-                  )}
                   <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
-                    <Button className="w-full" size="sm">
+                    <Button className="w-full" size="sm" onClick={() => setShowCreateForm(true)}>
                       Đăng ký
                     </Button>
                   </div>
@@ -214,14 +193,17 @@ const DocumentsPage = () => {
             <CardContent>
               <div className="space-y-4">
                 {myRequests.map((request) => (
-                  <div key={request.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <div key={request.requestId || request.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-3">
                       <div>
                         <h3 className="font-semibold text-gray-900 dark:text-white">
-                          {request.documentType}
+                          {request.documentType?.name || request.documentType}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
                           Ngày yêu cầu: {request.requestDate}
+                        </p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Mục đích: {request.purpose}
                         </p>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -234,25 +216,23 @@ const DocumentsPage = () => {
                       </div>
                     </div>
                     
-                    {request.processedDate && (
+                    {request.approvedDate && (
                       <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                        Ngày xử lý: {request.processedDate}
+                        Ngày duyệt: {request.approvedDate}
                       </p>
                     )}
                     
-                    {request.rejectionReason && (
-                      <div className="mb-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded">
-                        <p className="text-sm text-red-600 dark:text-red-400">
-                          <strong>Lý do từ chối:</strong> {request.rejectionReason}
-                        </p>
-                      </div>
+                    {request.completedDate && (
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                        Ngày hoàn thành: {request.completedDate}
+                      </p>
                     )}
                     
                     <div className="flex items-center justify-between">
                       <div className="text-sm text-gray-600 dark:text-gray-400">
-                        ID yêu cầu: #{request.id}
+                        ID yêu cầu: #{request.requestId || request.id}
                       </div>
-                      {request.downloadUrl && (
+                      {request.status === 'completed' && (
                         <Button size="sm" variant="outline">
                           <Download className="h-4 w-4 mr-2" />
                           Tải xuống

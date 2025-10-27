@@ -20,7 +20,7 @@ const NotificationsPage = () => {
   const fetchNotifications = async () => {
     try {
       setLoading(true);
-      const result = await notificationsService.getUnreadNotifications();
+      const result = await notificationsService.getMyNotifications();
       if (result.success) {
         setNotifications(result.data);
       } else {
@@ -239,7 +239,7 @@ const NotificationsPage = () => {
                           {notification.title}
                         </h3>
                         <div className="flex items-center space-x-2">
-                          {notification.priority > 1 && (
+                          {notification.priority === 'high' && (
                             <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
                               Quan trọng
                             </Badge>
@@ -256,7 +256,7 @@ const NotificationsPage = () => {
                       </p>
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {formatDate(notification.deliveredAt || notification.createdAt)}
+                          {formatDate(notification.deliveredAt || notification.scheduledAt || notification.createdAt)}
                         </span>
                         {!notification.isRead && (
                           <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
