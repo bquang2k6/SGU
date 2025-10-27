@@ -70,5 +70,3 @@ Dưới đây là danh sách các API hiện tại có vấn đề hoặc cần 
 **Lỗi:** `403`
 **Phương thức:** `GET`  
 **Endpoint:** `/api/crud/departments/`
-
----
