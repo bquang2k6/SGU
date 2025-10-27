@@ -27,7 +27,7 @@ const Sidebar = ({
   onRefresh,
   showBack = false,
   showRefresh = false,
-  title = "SGU Dashboard",
+  title = "Student",
   page = "home",
   onPageChange,
   onThemeToggle,
@@ -147,7 +147,7 @@ const Sidebar = ({
               </div>
               <div className="min-w-0">
                 <h1 className="text-lg font-semibold text-gray-900 truncate">
-                  SGU Dashboard
+                  Student
                 </h1>
                 <p className="text-xs text-gray-500 truncate text-left">
                   {title}

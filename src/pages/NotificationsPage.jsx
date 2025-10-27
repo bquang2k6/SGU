@@ -1,67 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Bell, CheckCircle, AlertCircle, Info, XCircle, Filter, Search } from 'lucide-react';
+import { notificationsService } from '../services/notificationsService';
+import { toast } from 'react-hot-toast';
 
 const NotificationsPage = () => {
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [filter, setFilter] = useState('all');
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data - trong thực tế sẽ lấy từ API
-  const notifications = [
-    {
-      id: 1,
-      title: 'Thông báo lịch thi cuối kỳ',
-      message: 'Lịch thi cuối kỳ học kỳ 1 năm học 2024-2025 đã được công bố. Vui lòng kiểm tra lịch thi của bạn.',
-      type: 'info',
-      isImportant: true,
-      isRead: false,
-      createdAt: '2024-10-25T10:30:00Z',
-      category: 'exam'
-    },
-    {
-      id: 2,
-      title: 'Cập nhật điểm số môn Lập trình Web',
-      message: 'Điểm số môn Lập trình Web đã được cập nhật. Bạn có thể xem chi tiết trong phần điểm số.',
-      type: 'success',
-      isImportant: false,
-      isRead: false,
-      createdAt: '2024-10-24T14:20:00Z',
-      category: 'grade'
-    },
-    {
-      id: 3,
-      title: 'Thông báo nghỉ học',
-      message: 'Ngày mai (26/10/2024) sẽ nghỉ học do lễ hội. Các lớp học sẽ được bù vào tuần sau.',
-      type: 'warning',
-      isImportant: true,
-      isRead: true,
-      createdAt: '2024-10-23T16:45:00Z',
-      category: 'schedule'
-    },
-    {
-      id: 4,
-      title: 'Yêu cầu giấy tờ đã được duyệt',
-      message: 'Yêu cầu giấy chứng nhận sinh viên của bạn đã được duyệt. Bạn có thể tải xuống tại đây.',
-      type: 'success',
-      isImportant: false,
-      isRead: true,
-      createdAt: '2024-10-22T09:15:00Z',
-      category: 'document'
-    },
-    {
-      id: 5,
-      title: 'Cảnh báo thiếu học phí',
-      message: 'Bạn chưa thanh toán học phí học kỳ 1. Vui lòng thanh toán trước ngày 30/10/2024.',
-      type: 'error',
-      isImportant: true,
-      isRead: false,
-      createdAt: '2024-10-21T11:00:00Z',
-      category: 'payment'
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const fetchNotifications = async () => {
+    try {
+      setLoading(true);
+      const result = await notificationsService.getUnreadNotifications();
+      if (result.success) {
+        setNotifications(result.data);
+      } else {
+        console.error('Lỗi tải thông báo:', result.message);
+        toast.error('Không thể tải danh sách thông báo');
+      }
+    } catch (error) {
+      console.error('Lỗi tải thông báo:', error);
+      toast.error('Có lỗi xảy ra khi tải thông báo');
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  const handleMarkAsRead = async (notificationId) => {
+    try {
+      const result = await notificationsService.markNotificationAsRead(notificationId);
+      if (result.success) {
+        toast.success('Đánh dấu thông báo đã đọc');
+        // Update local state
+        setNotifications(prev => 
+          prev.map(notif => 
+            notif.notificationId === notificationId || notif.id === notificationId
+              ? { ...notif, isRead: true }
+              : notif
+          )
+        );
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error('Lỗi đánh dấu đã đọc:', error);
+      toast.error('Có lỗi xảy ra khi đánh dấu đã đọc');
+    }
+  };
 
   const categories = [
     { id: 'all', label: 'Tất cả', count: notifications.length },
@@ -118,6 +112,17 @@ const NotificationsPage = () => {
     : notifications.filter(n => n.category === filter);
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
+
+  if (loading) {
+    return (
+      <div className="p-6 space-y-6">
+        <div className="text-center py-10">
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Đang tải thông báo...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -215,7 +220,7 @@ const NotificationsPage = () => {
           <div className="space-y-4">
             {filteredNotifications.map((notification) => (
               <Card 
-                key={notification.id} 
+                key={notification.notificationId || notification.id} 
                 className={`hover:shadow-lg transition-shadow cursor-pointer ${
                   !notification.isRead ? 'border-l-4 border-l-blue-500 bg-blue-50/50 dark:bg-blue-950/20' : ''
                 }`}
@@ -224,7 +229,7 @@ const NotificationsPage = () => {
                 <CardContent className="p-4">
                   <div className="flex items-start space-x-4">
                     <div className="flex-shrink-0">
-                      {getTypeIcon(notification.type)}
+                      {getTypeIcon(notification.notificationType || notification.type)}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-2">
@@ -234,24 +239,24 @@ const NotificationsPage = () => {
                           {notification.title}
                         </h3>
                         <div className="flex items-center space-x-2">
-                          {notification.isImportant && (
+                          {notification.priority > 1 && (
                             <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
                               Quan trọng
                             </Badge>
                           )}
-                          <Badge className={getTypeColor(notification.type)}>
-                            {getTypeText(notification.type)}
+                          <Badge className={getTypeColor(notification.notificationType || notification.type)}>
+                            {getTypeText(notification.notificationType || notification.type)}
                           </Badge>
                         </div>
                       </div>
                       <p className={`text-sm mb-2 ${
                         !notification.isRead ? 'text-gray-700 dark:text-gray-300' : 'text-gray-600 dark:text-gray-400'
                       }`}>
-                        {notification.message}
+                        {notification.content || notification.message}
                       </p>
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {formatDate(notification.createdAt)}
+                          {formatDate(notification.deliveredAt || notification.createdAt)}
                         </span>
                         {!notification.isRead && (
                           <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
@@ -320,7 +325,11 @@ const NotificationsPage = () => {
                   </div>
                   <div className="flex space-x-2">
                     {!selectedNotification.isRead && (
-                      <Button size="sm" variant="outline">
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => handleMarkAsRead(selectedNotification.notificationId || selectedNotification.id)}
+                      >
                         Đánh dấu đã đọc
                       </Button>
                     )}

@@ -1,17 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { FileText, Download, Upload, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { documentsService } from '../services/documentsService';
+import { toast } from 'react-hot-toast';
 
 const DocumentsPage = () => {
   const [selectedDocument, setSelectedDocument] = useState(null);
+  const [myRequests, setMyRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [createForm, setCreateForm] = useState({
+    requestId: '',
+    documentTypeId: '',
+    semesterId: '',
+    purpose: '',
+    studentIds: []
+  });
 
-  // Mock data - trong thực tế sẽ lấy từ API
+  // Mock data cho document types (có thể lấy từ API khác)
   const documentTypes = [
     {
-      id: 1,
+      id: 'DT001',
       name: 'Giấy chứng nhận sinh viên',
       description: 'Giấy chứng nhận tư cách sinh viên đang học tại trường',
       required: true,
@@ -20,61 +32,65 @@ const DocumentsPage = () => {
       status: 'available'
     },
     {
-      id: 2,
+      id: 'DT002',
       name: 'Bảng điểm',
-      description: 'Bảng điểm chi tiết các môn học đã hoàn thành',
-      required: false,
-      processingTime: '2-3 ngày làm việc',
-      fee: 0,
-      status: 'available'
-    },
-    {
-      id: 3,
-      name: 'Giấy xác nhận tốt nghiệp',
-      description: 'Giấy xác nhận đã hoàn thành chương trình học',
-      required: false,
-      processingTime: '7-10 ngày làm việc',
-      fee: 50000,
-      status: 'available'
-    },
-    {
-      id: 4,
-      name: 'Giấy chuyển trường',
-      description: 'Giấy chuyển trường cho sinh viên muốn chuyển sang trường khác',
+      description: 'Bảng điểm chính thức của sinh viên',
       required: false,
       processingTime: '5-7 ngày làm việc',
-      fee: 100000,
+      fee: 50000,
       status: 'available'
     }
   ];
 
-  const myRequests = [
-    {
-      id: 1,
-      documentType: 'Giấy chứng nhận sinh viên',
-      requestDate: '2024-10-20',
-      status: 'approved',
-      processedDate: '2024-10-23',
-      downloadUrl: '#'
-    },
-    {
-      id: 2,
-      documentType: 'Bảng điểm',
-      requestDate: '2024-10-25',
-      status: 'processing',
-      processedDate: null,
-      downloadUrl: null
-    },
-    {
-      id: 3,
-      documentType: 'Giấy xác nhận tốt nghiệp',
-      requestDate: '2024-10-15',
-      status: 'rejected',
-      processedDate: '2024-10-18',
-      downloadUrl: null,
-      rejectionReason: 'Thiếu thông tin cần thiết'
+  useEffect(() => {
+    fetchDocumentRequests();
+  }, []);
+
+  const fetchDocumentRequests = async () => {
+    try {
+      setLoading(true);
+      const result = await documentsService.getDocumentRequests();
+      if (result.success) {
+        setMyRequests(result.data);
+      } else {
+        console.error('Lỗi tải yêu cầu tài liệu:', result.message);
+        toast.error('Không thể tải danh sách yêu cầu tài liệu');
+      }
+    } catch (error) {
+      console.error('Lỗi tải yêu cầu tài liệu:', error);
+      toast.error('Có lỗi xảy ra khi tải dữ liệu');
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  const handleCreateRequest = async () => {
+    if (!createForm.requestId || !createForm.documentTypeId || !createForm.semesterId || !createForm.purpose) {
+      toast.error('Vui lòng điền đầy đủ thông tin');
+      return;
+    }
+
+    try {
+      const result = await documentsService.createDocumentRequest(createForm);
+      if (result.success) {
+        toast.success('Tạo yêu cầu tài liệu thành công');
+        setShowCreateForm(false);
+        setCreateForm({
+          requestId: '',
+          documentTypeId: '',
+          semesterId: '',
+          purpose: '',
+          studentIds: []
+        });
+        fetchDocumentRequests(); // Refresh danh sách
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error('Lỗi tạo yêu cầu:', error);
+      toast.error('Có lỗi xảy ra khi tạo yêu cầu');
+    }
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -104,6 +120,17 @@ const DocumentsPage = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="p-6 space-y-6">
+        <div className="text-center py-10">
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Đang tải dữ liệu...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -115,7 +142,7 @@ const DocumentsPage = () => {
             Đăng ký và theo dõi các loại giấy tờ cần thiết
           </p>
         </div>
-        <Button>
+        <Button onClick={() => setShowCreateForm(true)}>
           <FileText className="h-4 w-4 mr-2" />
           Đăng ký mới
         </Button>
@@ -319,6 +346,84 @@ const DocumentsPage = () => {
                   Đăng ký ngay
                 </Button>
                 <Button variant="outline" onClick={() => setSelectedDocument(null)}>
+                  Hủy
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Create Request Modal */}
+      {showCreateForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <Card className="w-full max-w-2xl">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Tạo yêu cầu tài liệu mới</CardTitle>
+                  <CardDescription>Điền thông tin để tạo yêu cầu tài liệu</CardDescription>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setShowCreateForm(false)}
+                >
+                  ×
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">ID yêu cầu</label>
+                  <input
+                    type="text"
+                    value={createForm.requestId}
+                    onChange={(e) => setCreateForm(prev => ({ ...prev, requestId: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Nhập ID yêu cầu"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Loại tài liệu</label>
+                  <select
+                    value={createForm.documentTypeId}
+                    onChange={(e) => setCreateForm(prev => ({ ...prev, documentTypeId: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Chọn loại tài liệu</option>
+                    {documentTypes.map(type => (
+                      <option key={type.id} value={type.id}>{type.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Học kỳ</label>
+                  <input
+                    type="text"
+                    value={createForm.semesterId}
+                    onChange={(e) => setCreateForm(prev => ({ ...prev, semesterId: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Nhập ID học kỳ"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">Mục đích</label>
+                  <input
+                    type="text"
+                    value={createForm.purpose}
+                    onChange={(e) => setCreateForm(prev => ({ ...prev, purpose: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Nhập mục đích sử dụng"
+                  />
+                </div>
+              </div>
+              <div className="flex space-x-3 pt-4">
+                <Button onClick={handleCreateRequest} className="flex-1">
+                  Tạo yêu cầu
+                </Button>
+                <Button variant="outline" onClick={() => setShowCreateForm(false)}>
                   Hủy
                 </Button>
               </div>

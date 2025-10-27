@@ -78,7 +78,7 @@ function App() {
       case 'progress':
         return 'Tiến độ học';
       default:
-        return 'SGU Dashboard';
+        return 'Student';
     }
   };
 

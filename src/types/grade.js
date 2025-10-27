@@ -16,10 +16,21 @@ export const GradeStatus = {
 export class Grade {
   constructor({
     id,
+    gradeId,
     studentId,
     subjectCode,
     subjectName,
+    subject,
+    courseClass,
+    semester,
     gradeType,
+    assignmentScore,
+    midtermScore,
+    finalScore,
+    averageScore,
+    letterGrade,
+    gradePoint,
+    isPassed,
     score,
     maxScore,
     weight,
@@ -31,10 +42,20 @@ export class Grade {
     updatedAt
   }) {
     this.id = id;
+    this.gradeId = gradeId;
     this.studentId = studentId;
     this.subjectCode = subjectCode;
-    this.subjectName = subjectName;
+    this.subjectName = subjectName || subject;
+    this.courseClass = courseClass;
+    this.semester = semester;
     this.gradeType = gradeType;
+    this.assignmentScore = assignmentScore;
+    this.midtermScore = midtermScore;
+    this.finalScore = finalScore;
+    this.averageScore = averageScore;
+    this.letterGrade = letterGrade;
+    this.gradePoint = gradePoint;
+    this.isPassed = isPassed;
     this.score = score;
     this.maxScore = maxScore;
     this.weight = weight;
@@ -47,10 +68,16 @@ export class Grade {
   }
 
   getPercentage() {
+    if (this.averageScore !== undefined) {
+      return this.averageScore;
+    }
     return this.maxScore > 0 ? (this.score / this.maxScore) * 100 : 0;
   }
 
   getLetterGrade() {
+    if (this.letterGrade) {
+      return this.letterGrade;
+    }
     const percentage = this.getPercentage();
     if (percentage >= 90) return 'A';
     if (percentage >= 80) return 'B';

@@ -13,8 +13,10 @@ export const UserStatus = {
 export class User {
   constructor({
     id,
+    username,
     studentId,
     fullName,
+    full_name,
     email,
     phone,
     dateOfBirth,
@@ -23,14 +25,16 @@ export class User {
     className,
     year,
     role = UserRole.STUDENT,
+    user_type = 'student',
     status = UserStatus.ACTIVE,
     avatar,
     createdAt,
     updatedAt
   }) {
     this.id = id;
+    this.username = username;
     this.studentId = studentId;
-    this.fullName = fullName;
+    this.fullName = fullName || full_name;
     this.email = email;
     this.phone = phone;
     this.dateOfBirth = dateOfBirth;
@@ -39,6 +43,7 @@ export class User {
     this.class = className;
     this.year = year;
     this.role = role;
+    this.user_type = user_type;
     this.status = status;
     this.avatar = avatar;
     this.createdAt = createdAt;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -6,12 +6,17 @@ import { Label } from '../components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { User, Lock, Mail, Phone, MapPin, Calendar, Save, Edit, Camera } from 'lucide-react';
+import { userService } from '../services/userService';
+import { authService } from '../services/authService';
+import { AuthStorage } from '../types/user';
+import { toast } from 'react-hot-toast';
 
 const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
+  const [loading, setLoading] = useState(true);
 
-  // Mock data - trong thực tế sẽ lấy từ API
+  // Lấy thông tin user từ localStorage hoặc API
   const [userInfo, setUserInfo] = useState({
     id: '1',
     studentId: '2021001234',
@@ -32,6 +37,19 @@ const ProfilePage = () => {
     confirmPassword: ''
   });
 
+  useEffect(() => {
+    // Lấy thông tin user từ localStorage
+    const savedUser = AuthStorage.getCurrentUser();
+    if (savedUser) {
+      setUserInfo(prev => ({
+        ...prev,
+        ...savedUser,
+        fullName: savedUser.fullName || savedUser.full_name
+      }));
+    }
+    setLoading(false);
+  }, []);
+
   const handleInputChange = (field, value) => {
     setUserInfo(prev => ({
       ...prev,
@@ -46,25 +64,75 @@ const ProfilePage = () => {
     }));
   };
 
-  const handleSaveProfile = () => {
-    // Logic lưu thông tin cá nhân
-    console.log('Saving profile:', userInfo);
-    setIsEditing(false);
+  const handleSaveProfile = async () => {
+    try {
+      const result = await userService.updateUser(userInfo.id, {
+        full_name: userInfo.fullName,
+        email: userInfo.email,
+        phone: userInfo.phone
+      });
+      
+      if (result.success) {
+        toast.success('Cập nhật thông tin thành công');
+        setIsEditing(false);
+        // Cập nhật localStorage
+        AuthStorage.setCurrentUser(userInfo);
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error('Lỗi cập nhật thông tin:', error);
+      toast.error('Có lỗi xảy ra khi cập nhật thông tin');
+    }
   };
 
-  const handleChangePassword = () => {
-    // Logic đổi mật khẩu
-    console.log('Changing password:', passwordForm);
-    setPasswordForm({
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    });
+  const handleChangePassword = async () => {
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      toast.error('Mật khẩu mới và xác nhận mật khẩu không khớp');
+      return;
+    }
+
+    if (passwordForm.newPassword.length < 6) {
+      toast.error('Mật khẩu mới phải có ít nhất 6 ký tự');
+      return;
+    }
+
+    try {
+      const result = await authService.changePassword(
+        passwordForm.currentPassword,
+        passwordForm.newPassword
+      );
+      
+      if (result.success) {
+        toast.success('Đổi mật khẩu thành công');
+        setPasswordForm({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        });
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error('Lỗi đổi mật khẩu:', error);
+      toast.error('Có lỗi xảy ra khi đổi mật khẩu');
+    }
   };
 
   const getInitials = (name) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
+
+  if (loading) {
+    return (
+      <div className="p-6 space-y-6">
+        <div className="text-center py-10">
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Đang tải thông tin cá nhân...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-6">

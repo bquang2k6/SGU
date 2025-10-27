@@ -1,64 +1,67 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Award, TrendingUp, BookOpen, Calendar, Download, Eye } from 'lucide-react';
+import { gradesService } from '../services/gradesService';
 
 const GradesPage = () => {
   const [selectedSubject, setSelectedSubject] = useState(null);
+  const [subjects, setSubjects] = useState([]);
+  const [overallStats, setOverallStats] = useState({
+    gpa: 0,
+    totalCredits: 0,
+    completedCredits: 0,
+    averageGrade: 0
+  });
+  const [loading, setLoading] = useState(true);
 
-  // Mock data - trong thực tế sẽ lấy từ API
-  const subjects = [
-    {
-      id: 1,
-      name: 'Lập trình Web',
-      code: 'CS101',
-      credits: 3,
-      finalGrade: 8.5,
-      letterGrade: 'B+',
-      semester: 'HK1 2024-2025',
-      grades: [
-        { type: 'Giữa kỳ', score: 8.0, maxScore: 10, weight: 30, date: '2024-10-15' },
-        { type: 'Cuối kỳ', score: 9.0, maxScore: 10, weight: 50, date: '2024-12-20' },
-        { type: 'Bài tập', score: 8.5, maxScore: 10, weight: 20, date: '2024-11-30' }
-      ]
-    },
-    {
-      id: 2,
-      name: 'Cơ sở dữ liệu',
-      code: 'CS102',
-      credits: 3,
-      finalGrade: 7.8,
-      letterGrade: 'B',
-      semester: 'HK1 2024-2025',
-      grades: [
-        { type: 'Giữa kỳ', score: 7.5, maxScore: 10, weight: 30, date: '2024-10-20' },
-        { type: 'Cuối kỳ', score: 8.0, maxScore: 10, weight: 50, date: '2024-12-25' },
-        { type: 'Thực hành', score: 8.0, maxScore: 10, weight: 20, date: '2024-12-10' }
-      ]
-    },
-    {
-      id: 3,
-      name: 'Toán cao cấp',
-      code: 'MATH101',
-      credits: 4,
-      finalGrade: 9.2,
-      letterGrade: 'A',
-      semester: 'HK1 2024-2025',
-      grades: [
-        { type: 'Giữa kỳ', score: 9.0, maxScore: 10, weight: 30, date: '2024-10-25' },
-        { type: 'Cuối kỳ', score: 9.5, maxScore: 10, weight: 50, date: '2024-12-30' },
-        { type: 'Bài tập', score: 9.0, maxScore: 10, weight: 20, date: '2024-12-05' }
-      ]
+  useEffect(() => {
+    const fetchGrades = async () => {
+      try {
+        setLoading(true);
+        const result = await gradesService.getMyGrades();
+        if (result.success) {
+          setSubjects(result.data);
+          // Tính toán thống kê tổng quan
+          const stats = calculateOverallStats(result.data);
+          setOverallStats(stats);
+        } else {
+          console.error('Lỗi tải điểm:', result.message);
+        }
+      } catch (error) {
+        console.error('Lỗi tải điểm:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGrades();
+  }, []);
+
+  const calculateOverallStats = (grades) => {
+    if (!grades || grades.length === 0) {
+      return { gpa: 0, totalCredits: 0, completedCredits: 0, averageGrade: 0 };
     }
-  ];
 
-  const overallStats = {
-    gpa: 8.5,
-    totalCredits: 10,
-    completedCredits: 10,
-    averageGrade: 8.5
+    const totalCredits = grades.reduce((sum, grade) => sum + (grade.credits || 0), 0);
+    const completedCredits = grades.filter(grade => grade.isPassed).reduce((sum, grade) => sum + (grade.credits || 0), 0);
+    const averageGrade = grades.reduce((sum, grade) => sum + (grade.averageScore || 0), 0) / grades.length;
+    
+    // Tính GPA (giả sử thang điểm 4.0)
+    const gpa = grades.reduce((sum, grade) => {
+      const gradePoint = grade.gradePoint || 0;
+      const credits = grade.credits || 0;
+      return sum + (gradePoint * credits);
+    }, 0) / totalCredits;
+
+    return {
+      gpa: gpa || 0,
+      totalCredits,
+      completedCredits,
+      averageGrade: averageGrade || 0
+    };
   };
 
   const getGradeColor = (grade) => {
@@ -79,6 +82,17 @@ const GradesPage = () => {
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
     }
   };
+
+  if (loading) {
+    return (
+      <div className="p-6 space-y-6">
+        <div className="text-center py-10">
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Đang tải điểm số...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -164,16 +178,16 @@ const GradesPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {subjects.map((subject) => (
               <Card 
-                key={subject.id} 
+                key={subject.gradeId || subject.id} 
                 className="hover:shadow-lg transition-shadow cursor-pointer"
                 onClick={() => setSelectedSubject(subject)}
               >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="space-y-1">
-                      <CardTitle className="text-lg">{subject.name}</CardTitle>
+                      <CardTitle className="text-lg">{subject.subject || subject.subjectName}</CardTitle>
                       <CardDescription className="text-sm">
-                        {subject.code} • {subject.credits} tín chỉ
+                        {subject.courseClass} • {subject.semester}
                       </CardDescription>
                     </div>
                     <Badge className={getGradeBadgeColor(subject.letterGrade)}>
@@ -183,9 +197,9 @@ const GradesPage = () => {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Điểm cuối kỳ</span>
-                    <span className={`text-2xl font-bold ${getGradeColor(subject.finalGrade)}`}>
-                      {subject.finalGrade}
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Điểm trung bình</span>
+                    <span className={`text-2xl font-bold ${getGradeColor(subject.averageScore)}`}>
+                      {subject.averageScore}
                     </span>
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
@@ -232,7 +246,7 @@ const GradesPage = () => {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      {subject.grades.map((grade, index) => (
+                    {Array.isArray(subject.grades) && subject.grades.map((grade, index) => (
                         <div key={index} className="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-800 rounded">
                           <div className="flex items-center space-x-3">
                             <span className="text-sm font-medium text-gray-900 dark:text-white">
@@ -339,7 +353,8 @@ const GradesPage = () => {
               <div>
                 <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Chi tiết điểm</label>
                 <div className="mt-2 space-y-2">
-                  {selectedSubject.grades.map((grade, index) => (
+                {Array.isArray(selectedSubject.grades) && selectedSubject.grades.length > 0 ? (
+                  selectedSubject.grades.map((grade, index) => (
                     <div key={index} className="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-800 rounded">
                       <div className="flex items-center space-x-3">
                         <span className="font-medium text-gray-900 dark:text-white">
@@ -358,7 +373,11 @@ const GradesPage = () => {
                         </span>
                       </div>
                     </div>
-                  ))}
+                  ))
+                ) : (
+                  <p className="text-gray-500 text-sm">Không có chi tiết điểm cho môn học này</p>
+                )}
+
                 </div>
               </div>
             </CardContent>

@@ -1,33 +1,104 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { TrendingUp, Award, BookOpen, Calendar, Target, BarChart3, Download } from 'lucide-react';
+import { progressService } from '../services/progressService';
+import { gradesService } from '../services/gradesService';
+import { toast } from 'react-hot-toast';
 
 const ProgressPage = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('current');
-
-  // Mock data - trong thực tế sẽ lấy từ API
-  const progressData = {
+  const [loading, setLoading] = useState(true);
+  const [progressData, setProgressData] = useState({
     current: {
-      gpa: 8.5,
-      creditsCompleted: 45,
+      gpa: 0,
+      creditsCompleted: 0,
       creditsTotal: 120,
-      subjectsCompleted: 15,
+      subjectsCompleted: 0,
       subjectsTotal: 40,
-      attendanceRate: 95.5,
-      averageGrade: 8.2
+      attendanceRate: 0,
+      averageGrade: 0
     },
     overall: {
-      gpa: 8.3,
-      creditsCompleted: 90,
+      gpa: 0,
+      creditsCompleted: 0,
       creditsTotal: 120,
-      subjectsCompleted: 30,
+      subjectsCompleted: 0,
       subjectsTotal: 40,
-      attendanceRate: 94.2,
-      averageGrade: 8.1
+      attendanceRate: 0,
+      averageGrade: 0
     }
+  });
+  const [availableCourses, setAvailableCourses] = useState([]);
+  const [tuitionFees, setTuitionFees] = useState([]);
+
+  useEffect(() => {
+    fetchProgressData();
+  }, []);
+
+  const fetchProgressData = async () => {
+    try {
+      setLoading(true);
+      
+      // Lấy điểm số để tính GPA
+      const gradesResult = await gradesService.getMyGrades();
+      if (gradesResult.success) {
+        const grades = gradesResult.data;
+        const currentGPA = calculateGPA(grades);
+        const completedCredits = grades.filter(g => g.isPassed).length * 3; // Giả sử mỗi môn 3 tín chỉ
+        const averageGrade = grades.reduce((sum, g) => sum + (g.averageScore || 0), 0) / grades.length;
+        
+        setProgressData(prev => ({
+          current: {
+            ...prev.current,
+            gpa: currentGPA,
+            creditsCompleted: completedCredits,
+            subjectsCompleted: grades.length,
+            averageGrade: averageGrade || 0
+          },
+          overall: {
+            ...prev.overall,
+            gpa: currentGPA,
+            creditsCompleted: completedCredits,
+            subjectsCompleted: grades.length,
+            averageGrade: averageGrade || 0
+          }
+        }));
+      }
+
+      // Lấy khóa học có thể đăng ký
+      const coursesResult = await progressService.getAvailableCourses('S001'); // Giả sử student ID
+      if (coursesResult.success) {
+        setAvailableCourses(coursesResult.data);
+      }
+
+      // Lấy thông tin học phí
+      const tuitionResult = await progressService.getTuitionFees();
+      if (tuitionResult.success) {
+        setTuitionFees(tuitionResult.data);
+      }
+
+    } catch (error) {
+      console.error('Lỗi tải dữ liệu tiến độ:', error);
+      toast.error('Có lỗi xảy ra khi tải dữ liệu tiến độ');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const calculateGPA = (grades) => {
+    if (!grades || grades.length === 0) return 0;
+    
+    const totalCredits = grades.length * 3; // Giả sử mỗi môn 3 tín chỉ
+    const weightedSum = grades.reduce((sum, grade) => {
+      const credits = 3;
+      const gradePoint = grade.gradePoint || 0;
+      return sum + (gradePoint * credits);
+    }, 0);
+    
+    return totalCredits > 0 ? weightedSum / totalCredits : 0;
   };
 
   const semesterProgress = [
@@ -85,66 +156,12 @@ const ProgressPage = () => {
   const achievements = [
     {
       id: 1,
-      title: 'Học sinh giỏi',
+      title: 'Học sinh giỏi test',
       description: 'Đạt danh hiệu học sinh giỏi học kỳ 1 năm 2024-2025',
       date: '2024-10-15',
       type: 'academic',
       status: 'earned'
     },
-    {
-      id: 2,
-      title: 'Tham gia tích cực',
-      description: 'Tham gia 100% các buổi học trong tháng',
-      date: '2024-10-01',
-      type: 'attendance',
-      status: 'earned'
-    },
-    {
-      id: 3,
-      title: 'Điểm cao',
-      description: 'Đạt điểm A+ trong 3 môn học liên tiếp',
-      date: '2024-09-20',
-      type: 'grade',
-      status: 'earned'
-    },
-    {
-      id: 4,
-      title: 'Tốt nghiệp loại giỏi',
-      description: 'Tốt nghiệp với GPA >= 8.0',
-      date: null,
-      type: 'graduation',
-      status: 'pending'
-    }
-  ];
-
-  const goals = [
-    {
-      id: 1,
-      title: 'Duy trì GPA >= 8.5',
-      description: 'Giữ điểm trung bình trên 8.5 trong học kỳ này',
-      progress: 85,
-      target: 100,
-      deadline: '2024-12-31',
-      status: 'in_progress'
-    },
-    {
-      id: 2,
-      title: 'Hoàn thành 120 tín chỉ',
-      description: 'Hoàn thành đủ 120 tín chỉ để tốt nghiệp',
-      progress: 75,
-      target: 100,
-      deadline: '2025-06-30',
-      status: 'in_progress'
-    },
-    {
-      id: 3,
-      title: 'Tham gia 95% buổi học',
-      description: 'Duy trì tỷ lệ tham gia lớp học trên 95%',
-      progress: 95,
-      target: 95,
-      deadline: '2024-12-31',
-      status: 'completed'
-    }
   ];
 
   const getStatusColor = (status) => {
@@ -180,6 +197,17 @@ const ProgressPage = () => {
   };
 
   const currentData = progressData[selectedPeriod];
+
+  if (loading) {
+    return (
+      <div className="p-6 space-y-6">
+        <div className="text-center py-10">
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Đang tải dữ liệu tiến độ...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -243,7 +271,8 @@ const ProgressPage = () => {
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-6">
+          {/* //môn học */}
+          {/* <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Môn học</p>
@@ -253,10 +282,11 @@ const ProgressPage = () => {
               </div>
               <Award className="h-8 w-8 text-purple-500" />
             </div>
-          </CardContent>
+          </CardContent> */}
         </Card>
         <Card>
-          <CardContent className="p-6">
+          {/* //điểm danh */}
+          {/* <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Điểm danh</p>
@@ -266,7 +296,7 @@ const ProgressPage = () => {
               </div>
               <Calendar className="h-8 w-8 text-orange-500" />
             </div>
-          </CardContent>
+          </CardContent> */}
         </Card>
       </div>
 

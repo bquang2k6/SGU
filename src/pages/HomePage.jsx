@@ -67,7 +67,7 @@ const HomePage = () => {
       {/* Welcome Section */}
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-bold text-gray-900">
-          Chào mừng đến với SGU Dashboard
+          Chào mừng đến với Student
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
           Quản lý học tập và thông tin sinh viên một cách dễ dàng và hiệu quả
