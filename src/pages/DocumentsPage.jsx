@@ -197,7 +197,7 @@ const DocumentsPage = () => {
                     <div className="flex items-center justify-between mb-3">
                       <div>
                         <h3 className="font-semibold text-gray-900 dark:text-white">
-                          {request.documentType?.name || request.documentType}
+                          {request.documentType?.typeName || 'Không xác định'}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
                           Ngày yêu cầu: {request.requestDate}

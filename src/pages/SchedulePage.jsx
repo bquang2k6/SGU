@@ -131,17 +131,17 @@ const SchedulePage = () => {
             <Calendar className="h-4 w-4 mr-2" />
             Làm mới
           </Button>
-          <Button>
+          {/* <Button>
             <Download className="h-4 w-4 mr-2" />
             Xuất lịch
-          </Button>
+          </Button> */}
         </div>
       </div>
 
       <Tabs defaultValue="weekly" className="space-y-4">
         <TabsList>
           <TabsTrigger value="weekly">Lịch tuần</TabsTrigger>
-          <TabsTrigger value="list">Danh sách lịch học</TabsTrigger>
+          {/* <TabsTrigger value="list">Danh sách lịch học</TabsTrigger> */}
           <TabsTrigger value="registrations">Danh sách đăng ký</TabsTrigger>
         </TabsList>
 
@@ -208,7 +208,7 @@ const SchedulePage = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="list" className="space-y-4">
+        {/* <TabsContent value="list" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Danh sách lịch học</CardTitle>
@@ -271,7 +271,7 @@ const SchedulePage = () => {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </TabsContent> */}
 
         <TabsContent value="registrations" className="space-y-4">
           <Card>

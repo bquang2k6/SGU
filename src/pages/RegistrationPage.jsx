@@ -7,6 +7,7 @@ import { BookOpen, CheckCircle, XCircle, AlertTriangle, Clock, Users, MapPin, Ca
 import { registrationService } from '../services/registrationService';
 import { readOnlyService } from '../services/readOnlyService';
 import { toast } from 'react-hot-toast';
+import { scheduleService } from '../services/scheduleService';
 
 const RegistrationPage = () => {
   const [availableCourses, setAvailableCourses] = useState([]);
@@ -31,7 +32,7 @@ const RegistrationPage = () => {
       setLoading(true);
       const [coursesResult, registrationsResult, semestersResult] = await Promise.all([
         registrationService.getAvailableCourses(studentId),
-        registrationService.getMyRegistrations(),
+        scheduleService.getMyRegistrations(),
         readOnlyService.getSemesters()
       ]);
 
@@ -170,7 +171,7 @@ const RegistrationPage = () => {
                     <div className="space-y-1">
                       <CardTitle className="text-lg">{course.courseName}</CardTitle>
                       <CardDescription className="text-sm">
-                        {course.courseCode} • {course.subject?.subjectName}
+                        {course.courseCode} • {course.subject}
                       </CardDescription>
                     </div>
                     <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
@@ -198,7 +199,7 @@ const RegistrationPage = () => {
                     <div className="flex items-center text-sm">
                       <BookOpen className="h-4 w-4 mr-2 text-gray-500" />
                       <span className="text-gray-600 dark:text-gray-400">Tín chỉ:</span>
-                      <span className="ml-2 text-gray-900 dark:text-white">{course.subject?.credits}</span>
+                      <span className="ml-2 text-gray-900 dark:text-white">{course.credits}</span>
                     </div>
                   </div>
                   
