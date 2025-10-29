@@ -8,7 +8,7 @@ import GradesPage from './pages/GradesPage';
 import DocumentsPage from './pages/DocumentsPage';
 import NotificationsPage from './pages/NotificationsPage';
 import ProfilePage from './pages/ProfilePage';
-import ProgressPage from './pages/ProgressPage';
+// import ProgressPage from './pages/ProgressPage';
 import RegistrationPage from './pages/RegistrationPage';
 import LookupPage from './pages/LookupPage';
 import SchedulePage from './pages/SchedulePage';
@@ -58,8 +58,8 @@ function App() {
         return <NotificationsPage />;
       case 'profile':
         return <ProfilePage />;
-      case 'progress':
-        return <ProgressPage />;
+      // case 'progress':
+      //   return <ProgressPage />;
       case 'registration':
         return <RegistrationPage />;
       case 'lookup':

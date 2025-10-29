@@ -119,7 +119,7 @@ const DocumentsPage = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-black">
             Đăng ký giấy tờ
           </h1>
           <p className="text-gray-600 dark:text-gray-300 mt-2">
@@ -163,11 +163,11 @@ const DocumentsPage = () => {
                 <CardContent className="space-y-3">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600 dark:text-gray-400">Thời gian xử lý:</span>
-                    <span className="text-gray-900 dark:text-white">{docType.processingDays} ngày</span>
+                    <span className="text-gray-900 dark:text-black">{docType.processingDays} ngày</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600 dark:text-gray-400">Số lượng tối đa:</span>
-                    <span className="text-gray-900 dark:text-white">
+                    <span className="text-gray-900 dark:text-black">
                       {docType.maxRequestsPerSemester || 'Không giới hạn'}
                     </span>
                   </div>
@@ -196,7 +196,7 @@ const DocumentsPage = () => {
                   <div key={request.requestId || request.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-3">
                       <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                        <h3 className="font-semibold text-gray-900 dark:text-black">
                           {request.documentType?.typeName || 'Không xác định'}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -287,12 +287,16 @@ const DocumentsPage = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Thời gian xử lý</label>
-                  <p className="text-gray-900 dark:text-white">{selectedDocument.processingTime}</p>
+                  <p className="text-gray-900 dark:text-black">{selectedDocument.processingTime}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Phí</label>
-                  <p className="text-gray-900 dark:text-white">
-                    {selectedDocument.fee === 0 ? 'Miễn phí' : `${selectedDocument.fee.toLocaleString()} VNĐ`}
+                  <p className="text-gray-900 dark:text-black">
+                    {selectedDocument.fee === 0
+                      ? 'Miễn phí'
+                      : selectedDocument.fee
+                      ? `${selectedDocument.fee.toLocaleString()} VNĐ`
+                      : 'Không có thông tin'}
                   </p>
                 </div>
                 <div>
@@ -303,14 +307,14 @@ const DocumentsPage = () => {
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Bắt buộc</label>
-                  <p className="text-gray-900 dark:text-white">
+                  <p className="text-gray-900 dark:text-black">
                     {selectedDocument.required ? 'Có' : 'Không'}
                   </p>
                 </div>
               </div>
               
               <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 className="font-semibold text-gray-900 dark:text-black mb-2">
                   Hướng dẫn đăng ký:
                 </h3>
                 <ol className="list-decimal list-inside space-y-1 text-sm text-gray-600 dark:text-gray-400">

@@ -1,6 +1,6 @@
 import { apiService } from './apiService';
 import { API_ENDPOINTS } from '../config/api';
-import { AuthStorage } from '../types/user'; // 👈 Thêm dòng này
+import { AuthStorage } from '../types/user'; // Thêm dòng này
 
 class RegistrationService {
   getUsername() {

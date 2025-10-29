@@ -98,7 +98,7 @@ const GradesPage = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-black">
             Điểm và kết quả học tập
           </h1>
           <p className="text-gray-600 dark:text-gray-300 mt-2">
@@ -118,7 +118,7 @@ const GradesPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">GPA</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-2xl font-bold text-gray-900 dark:text-black">
                   {overallStats.gpa}
                 </p>
               </div>
@@ -131,7 +131,7 @@ const GradesPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Tín chỉ đã hoàn thành</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-2xl font-bold text-gray-900 dark:text-black">
                   {overallStats.completedCredits}/{overallStats.totalCredits}
                 </p>
               </div>
@@ -144,7 +144,7 @@ const GradesPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Điểm trung bình</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-2xl font-bold text-gray-900 dark:text-black">
                   {overallStats.averageGrade}
                 </p>
               </div>
@@ -157,7 +157,7 @@ const GradesPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Môn học</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-2xl font-bold text-gray-900 dark:text-black">
                   {subjects.length}
                 </p>
               </div>
@@ -229,7 +229,7 @@ const GradesPage = () => {
                   <div key={subject.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-4">
                       <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                        <h3 className="font-semibold text-gray-900 dark:text-black">
                           {subject.subject?.subjectName || subject.subjectName} ({subject.subject?.subjectCode || subject.subjectCode})
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -249,7 +249,7 @@ const GradesPage = () => {
                     {Array.isArray(subject.grades) && subject.grades.map((grade, index) => (
                         <div key={index} className="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-800 rounded">
                           <div className="flex items-center space-x-3">
-                            <span className="text-sm font-medium text-gray-900 dark:text-white">
+                            <span className="text-sm font-medium text-gray-900 dark:text-black">
                               {grade.type}
                             </span>
                             <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -287,17 +287,17 @@ const GradesPage = () => {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-gray-200 dark:border-gray-700">
-                      <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-white">Môn học</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-white">Mã môn</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-white">Tín chỉ</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-white">Điểm</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-white">Xếp loại</th>
+                      <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-black">Môn học</th>
+                      <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-black">Mã môn</th>
+                      <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-black">Tín chỉ</th>
+                      <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-black">Điểm</th>
+                      <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-black">Xếp loại</th>
                     </tr>
                   </thead>
                   <tbody>
                     {subjects.map((subject) => (
                       <tr key={subject.gradeId || subject.id} className="border-b border-gray-200 dark:border-gray-700">
-                        <td className="py-3 px-4 text-gray-900 dark:text-white">{subject.subject?.subjectName || subject.subjectName}</td>
+                        <td className="py-3 px-4 text-gray-900 dark:text-black">{subject.subject?.subjectName || subject.subjectName}</td>
                         <td className="py-3 px-4 text-gray-600 dark:text-gray-400">{subject.subject?.subjectCode || subject.subjectCode}</td>
                         <td className="py-3 px-4 text-gray-600 dark:text-gray-400">{subject.subject?.credits || subject.credits}</td>
                         <td className={`py-3 px-4 font-semibold ${getGradeColor(subject.totalScore)}`}>
@@ -341,7 +341,7 @@ const GradesPage = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Tín chỉ</label>
-                  <p className="text-gray-900 dark:text-white">{selectedSubject.subject?.credits || selectedSubject.credits}</p>
+                  <p className="text-gray-900 dark:text-black">{selectedSubject.subject?.credits || selectedSubject.credits}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Điểm tổng kết</label>
@@ -354,25 +354,25 @@ const GradesPage = () => {
                 <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Chi tiết điểm</label>
                 <div className="mt-2 space-y-2">
                   <div className="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-800 rounded">
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">Điểm chuyên cần</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-black">Điểm chuyên cần</span>
                     <span className={`font-semibold ${getGradeColor(selectedSubject.attendanceScore)}`}>
                       {selectedSubject.attendanceScore?.toFixed(1) || 'N/A'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-800 rounded">
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">Điểm bài tập</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-black">Điểm bài tập</span>
                     <span className={`font-semibold ${getGradeColor(selectedSubject.assignmentScore)}`}>
                       {selectedSubject.assignmentScore?.toFixed(1) || 'N/A'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-800 rounded">
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">Điểm giữa kỳ</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-black">Điểm giữa kỳ</span>
                     <span className={`font-semibold ${getGradeColor(selectedSubject.midtermScore)}`}>
                       {selectedSubject.midtermScore?.toFixed(1) || 'N/A'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-800 rounded">
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">Điểm cuối kỳ</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-black">Điểm cuối kỳ</span>
                     <span className={`font-semibold ${getGradeColor(selectedSubject.finalScore)}`}>
                       {selectedSubject.finalScore?.toFixed(1) || 'N/A'}
                     </span>

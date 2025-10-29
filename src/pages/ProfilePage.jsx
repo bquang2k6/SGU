@@ -177,7 +177,7 @@ const ProfilePage = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-black">
             Thông tin cá nhân
           </h1>
           <p className="text-gray-600 dark:text-gray-300 mt-2">
@@ -412,7 +412,7 @@ const ProfilePage = () => {
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
                   <div>
-                    <h3 className="font-medium text-gray-900 dark:text-white">
+                    <h3 className="font-medium text-gray-900 dark:text-black">
                       Thông báo email
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -425,7 +425,7 @@ const ProfilePage = () => {
                 </div>
                 <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
                   <div>
-                    <h3 className="font-medium text-gray-900 dark:text-white">
+                    <h3 className="font-medium text-gray-900 dark:text-black">
                       Thông báo SMS
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -438,7 +438,7 @@ const ProfilePage = () => {
                 </div>
                 <div className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
                   <div>
-                    <h3 className="font-medium text-gray-900 dark:text-white">
+                    <h3 className="font-medium text-gray-900 dark:text-black">
                       Chế độ riêng tư
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">

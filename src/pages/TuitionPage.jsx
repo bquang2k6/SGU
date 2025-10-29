@@ -106,21 +106,14 @@ const TuitionPage = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-black">
             Học phí
           </h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-2">
-            Xem và quản lý thông tin học phí
-          </p>
         </div>
         <div className="flex items-center space-x-2">
           <Button variant="outline" onClick={fetchTuitionFees}>
             <Calendar className="h-4 w-4 mr-2" />
             Làm mới
-          </Button>
-          <Button>
-            <Download className="h-4 w-4 mr-2" />
-            Xuất báo cáo
           </Button>
         </div>
       </div>
@@ -132,7 +125,7 @@ const TuitionPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Tổng học phí</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-2xl font-bold text-gray-900 dark:text-black">
                   {formatCurrency(calculateTotalAmount())}
                 </p>
               </div>
@@ -145,7 +138,7 @@ const TuitionPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Đã thanh toán</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-2xl font-bold text-gray-900 dark:text-black">
                   {formatCurrency(calculatePaidAmount())}
                 </p>
               </div>
@@ -158,7 +151,7 @@ const TuitionPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Còn lại</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-2xl font-bold text-gray-900 dark:text-black">
                   {formatCurrency(calculateRemainingAmount())}
                 </p>
               </div>
@@ -171,7 +164,7 @@ const TuitionPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Quá hạn</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-2xl font-bold text-gray-900 dark:text-black">
                   {getOverdueCount()}
                 </p>
               </div>
@@ -200,7 +193,7 @@ const TuitionPage = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white">
+                      <h3 className="font-semibold text-gray-900 dark:text-black">
                         Học phí {fee.semester?.semesterName}
                       </h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -225,7 +218,7 @@ const TuitionPage = () => {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
                       <p className="text-gray-600 dark:text-gray-400">Tổng số tiền</p>
-                      <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                      <p className="text-lg font-semibold text-gray-900 dark:text-black">
                         {formatCurrency(fee.totalAmount)}
                       </p>
                     </div>
@@ -243,7 +236,7 @@ const TuitionPage = () => {
                     </div>
                     <div>
                       <p className="text-gray-600 dark:text-gray-400">Phí/tín chỉ</p>
-                      <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                      <p className="text-lg font-semibold text-gray-900 dark:text-black">
                         {formatCurrency(fee.feePerCredit)}
                       </p>
                     </div>
@@ -265,7 +258,7 @@ const TuitionPage = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white">
+                      <h3 className="font-semibold text-gray-900 dark:text-black">
                         Học phí {fee.semester?.semesterName}
                       </h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -283,7 +276,7 @@ const TuitionPage = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm text-gray-600 dark:text-gray-400">Số tiền cần thanh toán</p>
-                      <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                      <p className="text-2xl font-bold text-gray-900 dark:text-black">
                         {formatCurrency(fee.remainingAmount)}
                       </p>
                     </div>
@@ -309,7 +302,7 @@ const TuitionPage = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white">
+                      <h3 className="font-semibold text-gray-900 dark:text-black">
                         Học phí {fee.semester?.semesterName}
                       </h3>
                       <p className="text-sm text-red-600 dark:text-red-400">
@@ -353,7 +346,7 @@ const TuitionPage = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-white">
+                      <h3 className="font-semibold text-gray-900 dark:text-black">
                         Học phí {fee.semester?.semesterName}
                       </h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -412,15 +405,15 @@ const TuitionPage = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Tổng tín chỉ</label>
-                  <p className="text-gray-900 dark:text-white">{selectedFee.totalCredits}</p>
+                  <p className="text-gray-900 dark:text-black">{selectedFee.totalCredits}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Phí/tín chỉ</label>
-                  <p className="text-gray-900 dark:text-white">{formatCurrency(selectedFee.feePerCredit)}</p>
+                  <p className="text-gray-900 dark:text-black">{formatCurrency(selectedFee.feePerCredit)}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Tổng số tiền</label>
-                  <p className="text-gray-900 dark:text-white">{formatCurrency(selectedFee.totalAmount)}</p>
+                  <p className="text-gray-900 dark:text-black">{formatCurrency(selectedFee.totalAmount)}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Đã thanh toán</label>
@@ -432,11 +425,11 @@ const TuitionPage = () => {
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Hạn thanh toán</label>
-                  <p className="text-gray-900 dark:text-white">{formatDate(selectedFee.dueDate)}</p>
+                  <p className="text-gray-900 dark:text-black">{formatDate(selectedFee.dueDate)}</p>
                 </div>
               </div>
               
-              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+              {/* <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
                 <div className="flex space-x-3">
                   {selectedFee.paymentStatus !== 'paid' && (
                     <Button className="flex-1">
@@ -449,7 +442,7 @@ const TuitionPage = () => {
                     Tải hóa đơn
                   </Button>
                 </div>
-              </div>
+              </div> */}
             </CardContent>
           </Card>
         </div>

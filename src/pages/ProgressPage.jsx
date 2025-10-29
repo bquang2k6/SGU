@@ -36,8 +36,8 @@ const ProgressPage = () => {
   const [goals, setGoals] = useState([
     {
       id: 1,
-      title: 'Hoàn thành 100% tín chỉ',
-      description: 'Đăng ký và hoàn thành toàn bộ tín chỉ theo kế hoạch học tập',
+      title: 'Hoàn thành 100% tín chỉ (data for FE test)',
+      description: 'Đăng ký và hoàn thành toàn bộ tín chỉ theo kế hoạch học tập (data for FE test)',
       progress: 75,
       target: 100,
       status: 'in_progress',
@@ -178,9 +178,9 @@ const ProgressPage = () => {
     {
       id: 1,
       title: 'Học sinh giỏi test',
-      description: 'Đạt danh hiệu học sinh giỏi học kỳ 1 năm 2024-2025',
-      date: '2024-10-15',
-      type: 'academic',
+      description: 'Đạt danh hiệu học sinh giỏi học kỳ 1 năm 2024-2025 (data for FE test)',
+      date: '2024-10-15 (data for FE test)',
+      type: 'academic (data for FE test)',
       status: 'earned'
     },
   ];
@@ -234,7 +234,7 @@ const ProgressPage = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-black">
             Theo dõi tiến độ học
           </h1>
           <p className="text-gray-600 dark:text-gray-300 mt-2">
@@ -270,7 +270,7 @@ const ProgressPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">GPA</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-2xl font-bold text-gray-900 dark:text-black">
                   {currentData.gpa}
                 </p>
               </div>
@@ -283,7 +283,7 @@ const ProgressPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Tín chỉ</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-2xl font-bold text-gray-900 dark:text-black">
                   {currentData.creditsCompleted}/{currentData.creditsTotal}
                 </p>
               </div>
@@ -297,7 +297,7 @@ const ProgressPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Môn học</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-2xl font-bold text-gray-900 dark:text-black">
                   {currentData.subjectsCompleted}/{currentData.subjectsTotal}
                 </p>
               </div>
@@ -311,7 +311,7 @@ const ProgressPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Điểm danh</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-2xl font-bold text-gray-900 dark:text-black">
                   {currentData.attendanceRate}%
                 </p>
               </div>
@@ -344,7 +344,7 @@ const ProgressPage = () => {
                     <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
                       Đã hoàn thành
                     </span>
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                    <span className="text-sm font-medium text-gray-900 dark:text-black">
                       {currentData.creditsCompleted}/{currentData.creditsTotal}
                     </span>
                   </div>
@@ -374,7 +374,7 @@ const ProgressPage = () => {
                     <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
                       Đã hoàn thành
                     </span>
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                    <span className="text-sm font-medium text-gray-900 dark:text-black">
                       {currentData.subjectsCompleted}/{currentData.subjectsTotal}
                     </span>
                   </div>
@@ -407,7 +407,7 @@ const ProgressPage = () => {
                   <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-3">
                       <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                        <h3 className="font-semibold text-gray-900 dark:text-black">
                           {semester.semester}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -418,7 +418,7 @@ const ProgressPage = () => {
                         <Badge className={getStatusColor(semester.status)}>
                           {getStatusText(semester.status)}
                         </Badge>
-                        <span className="text-lg font-bold text-gray-900 dark:text-white">
+                        <span className="text-lg font-bold text-gray-900 dark:text-black">
                           {semester.gpa}
                         </span>
                       </div>
@@ -454,7 +454,7 @@ const ProgressPage = () => {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-semibold text-gray-900 dark:text-white">
+                          <h3 className="font-semibold text-gray-900 dark:text-black">
                             {achievement.title}
                           </h3>
                           <Badge className={getStatusColor(achievement.status)}>
@@ -492,7 +492,7 @@ const ProgressPage = () => {
                   <div key={goal.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-3">
                       <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                        <h3 className="font-semibold text-gray-900 dark:text-black">
                           {goal.title}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -506,7 +506,7 @@ const ProgressPage = () => {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between text-sm">
                         <span className="text-gray-600 dark:text-gray-400">Tiến độ</span>
-                        <span className="text-gray-900 dark:text-white">
+                        <span className="text-gray-900 dark:text-black">
                           {goal.progress}%
                         </span>
                       </div>

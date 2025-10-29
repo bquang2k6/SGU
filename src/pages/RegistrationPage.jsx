@@ -140,7 +140,7 @@ const RegistrationPage = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-black">
             Đăng ký môn học
           </h1>
           <p className="text-gray-600 dark:text-gray-300 mt-2">
@@ -184,22 +184,22 @@ const RegistrationPage = () => {
                     <div className="flex items-center text-sm">
                       <Users className="h-4 w-4 mr-2 text-gray-500" />
                       <span className="text-gray-600 dark:text-gray-400">Giảng viên:</span>
-                      <span className="ml-2 text-gray-900 dark:text-white">{course.teacher?.fullName}</span>
+                      <span className="ml-2 text-gray-900 dark:text-black">{course.teacher?.fullName}</span>
                     </div>
                     <div className="flex items-center text-sm">
                       <Calendar className="h-4 w-4 mr-2 text-gray-500" />
                       <span className="text-gray-600 dark:text-gray-400">Lịch học:</span>
-                      <span className="ml-2 text-gray-900 dark:text-white">{course.schedule}</span>
+                      <span className="ml-2 text-gray-900 dark:text-black">{course.schedule}</span>
                     </div>
                     <div className="flex items-center text-sm">
                       <MapPin className="h-4 w-4 mr-2 text-gray-500" />
                       <span className="text-gray-600 dark:text-gray-400">Phòng:</span>
-                      <span className="ml-2 text-gray-900 dark:text-white">{course.room}</span>
+                      <span className="ml-2 text-gray-900 dark:text-black">{course.room}</span>
                     </div>
                     <div className="flex items-center text-sm">
                       <BookOpen className="h-4 w-4 mr-2 text-gray-500" />
                       <span className="text-gray-600 dark:text-gray-400">Tín chỉ:</span>
-                      <span className="ml-2 text-gray-900 dark:text-white">{course.credits}</span>
+                      <span className="ml-2 text-gray-900 dark:text-black">{course.credits}</span>
                     </div>
                   </div>
                   
@@ -253,7 +253,7 @@ const RegistrationPage = () => {
                   <div key={registration.registrationId} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-3">
                       <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                        <h3 className="font-semibold text-gray-900 dark:text-black">
                           {registration.courseClass?.courseName}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -314,7 +314,7 @@ const RegistrationPage = () => {
               
               {prerequisitesResult.missingPrerequisites && prerequisitesResult.missingPrerequisites.length > 0 && (
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                  <h3 className="font-semibold text-gray-900 dark:text-black mb-2">
                     Môn học tiên quyết còn thiếu:
                   </h3>
                   <div className="space-y-2">
@@ -371,7 +371,7 @@ const RegistrationPage = () => {
               
               {scheduleConflictResult.conflicts && scheduleConflictResult.conflicts.length > 0 && (
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                  <h3 className="font-semibold text-gray-900 dark:text-black mb-2">
                     Các môn học xung đột:
                   </h3>
                   <div className="space-y-2">

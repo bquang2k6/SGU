@@ -128,7 +128,7 @@ const NotificationsPage = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-black">
             Thông báo
           </h1>
           <p className="text-gray-600 dark:text-gray-300 mt-2">
@@ -154,7 +154,7 @@ const NotificationsPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Tổng thông báo</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-2xl font-bold text-gray-900 dark:text-black">
                   {notifications.length}
                 </p>
               </div>
@@ -167,7 +167,7 @@ const NotificationsPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Chưa đọc</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-2xl font-bold text-gray-900 dark:text-black">
                   {unreadCount}
                 </p>
               </div>
@@ -180,7 +180,7 @@ const NotificationsPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Quan trọng</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-2xl font-bold text-gray-900 dark:text-black">
                   {notifications.filter(n => n.isImportant).length}
                 </p>
               </div>
@@ -193,7 +193,7 @@ const NotificationsPage = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Đã đọc</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-2xl font-bold text-gray-900 dark:text-black">
                   {notifications.filter(n => n.isRead).length}
                 </p>
               </div>
@@ -234,7 +234,7 @@ const NotificationsPage = () => {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-2">
                         <h3 className={`font-semibold ${
-                          !notification.isRead ? 'text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300'
+                          !notification.isRead ? 'text-gray-900 dark:text-black' : 'text-gray-700 dark:text-gray-300'
                         }`}>
                           {notification.title}
                         </h3>

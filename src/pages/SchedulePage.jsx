@@ -119,12 +119,12 @@ const SchedulePage = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-black">
             Lịch học
           </h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-2">
+          {/* <p className="text-gray-600 dark:text-gray-300 mt-2">
             Xem lịch học và quản lý các môn học đã đăng ký
-          </p>
+          </p> */}
         </div>
         <div className="flex items-center space-x-2">
           <Button variant="outline" onClick={fetchScheduleData}>
@@ -174,23 +174,23 @@ const SchedulePage = () => {
                 <CardContent className="space-y-2">
                   {day.courses.length > 0 ? (
                     day.courses.map((course, index) => (
-                      <div key={index} className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <div key={index} className="p-3 bg-gray-50 dark:bg-gray-100 rounded-lg">
                         <div className="space-y-1">
-                          <h4 className="font-semibold text-sm text-gray-900 dark:text-white">
+                          <h4 className="font-semibold text-sm text-gray-900 dark:text-black">
                             {course.courseName}
                           </h4>
-                          <p className="text-xs text-gray-600 dark:text-gray-400">
+                          <p className="text-xs text-gray-600 dark:text-gray-800">
                             {course.courseCode}
                           </p>
-                          <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                          <div className="flex items-center text-xs text-gray-500 dark:text-gray-800">
                             <Clock className="h-3 w-3 mr-1" />
                             {course.startTime} - {course.endTime}
                           </div>
-                          <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                          <div className="flex items-center text-xs text-gray-500 dark:text-gray-800">
                             <MapPin className="h-3 w-3 mr-1" />
                             {course.room}
                           </div>
-                          <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                          <div className="flex items-center text-xs text-gray-500 dark:text-gray-800">
                             <Users className="h-3 w-3 mr-1" />
                             {course.teacher}
                           </div>
@@ -222,7 +222,7 @@ const SchedulePage = () => {
                   <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-3">
                       <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                        <h3 className="font-semibold text-gray-900 dark:text-black">
                           {course.courseName}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -239,7 +239,7 @@ const SchedulePage = () => {
                         <Clock className="h-4 w-4 mr-2 text-gray-500" />
                         <div>
                           <p className="text-gray-600 dark:text-gray-400">Thời gian</p>
-                          <p className="text-gray-900 dark:text-white">
+                          <p className="text-gray-900 dark:text-black">
                             {course.startTime} - {course.endTime}
                           </p>
                         </div>
@@ -248,21 +248,21 @@ const SchedulePage = () => {
                         <MapPin className="h-4 w-4 mr-2 text-gray-500" />
                         <div>
                           <p className="text-gray-600 dark:text-gray-400">Phòng</p>
-                          <p className="text-gray-900 dark:text-white">{course.room}</p>
+                          <p className="text-gray-900 dark:text-black">{course.room}</p>
                         </div>
                       </div>
                       <div className="flex items-center">
                         <Users className="h-4 w-4 mr-2 text-gray-500" />
                         <div>
                           <p className="text-gray-600 dark:text-gray-400">Giảng viên</p>
-                          <p className="text-gray-900 dark:text-white">{course.teacher}</p>
+                          <p className="text-gray-900 dark:text-black">{course.teacher}</p>
                         </div>
                       </div>
                       <div className="flex items-center">
                         <BookOpen className="h-4 w-4 mr-2 text-gray-500" />
                         <div>
                           <p className="text-gray-600 dark:text-gray-400">Mã lớp</p>
-                          <p className="text-gray-900 dark:text-white">{course.courseClassId}</p>
+                          <p className="text-gray-900 dark:text-black">{course.courseClassId}</p>
                         </div>
                       </div>
                     </div>
@@ -287,7 +287,7 @@ const SchedulePage = () => {
                   <div key={registration.registrationId} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-3">
                       <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                        <h3 className="font-semibold text-gray-900 dark:text-black">
                           {registration.courseClass?.courseName}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">

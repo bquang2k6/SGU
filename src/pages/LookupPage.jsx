@@ -94,7 +94,7 @@ const LookupPage = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-black">
             Tra cứu thông tin
           </h1>
           <p className="text-gray-600 dark:text-gray-300 mt-2">
@@ -148,7 +148,7 @@ const LookupPage = () => {
                     <CardContent className="p-4">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <h3 className="font-semibold text-gray-900 dark:text-white">
+                          <h3 className="font-semibold text-gray-900 dark:text-black">
                             {dept.departmentName}
                           </h3>
                           <Badge className={getStatusColor(dept.status)}>
@@ -185,7 +185,7 @@ const LookupPage = () => {
                     <CardContent className="p-4">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <h3 className="font-semibold text-gray-900 dark:text-white">
+                          <h3 className="font-semibold text-gray-900 dark:text-black">
                             {major.majorName}
                           </h3>
                         </div>
@@ -231,7 +231,7 @@ const LookupPage = () => {
                   <div key={subject.subjectId} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
                     <div className="flex items-center justify-between mb-3">
                       <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                        <h3 className="font-semibold text-gray-900 dark:text-black">
                           {subject.subjectName}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -243,19 +243,19 @@ const LookupPage = () => {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                       <div>
                         <p className="text-gray-600 dark:text-gray-400">Khoa</p>
-                        <p className="text-gray-900 dark:text-white">{subject.department}</p>
+                        <p className="text-gray-900 dark:text-black">{subject.department}</p>
                       </div>
                       <div>
                         <p className="text-gray-600 dark:text-gray-400">Tín chỉ</p>
-                        <p className="text-gray-900 dark:text-white">{subject.credits}</p>
+                        <p className="text-gray-900 dark:text-black">{subject.credits}</p>
                       </div>
                       <div>
                         <p className="text-gray-600 dark:text-gray-400">Lý thuyết</p>
-                        <p className="text-gray-900 dark:text-white">{subject.theoryHours}h</p>
+                        <p className="text-gray-900 dark:text-black">{subject.theoryHours}h</p>
                       </div>
                       <div>
                         <p className="text-gray-600 dark:text-gray-400">Thực hành</p>
-                        <p className="text-gray-900 dark:text-white">{subject.practiceHours}h</p>
+                        <p className="text-gray-900 dark:text-black">{subject.practiceHours}h</p>
                       </div>
                     </div>
                   </div>
@@ -283,7 +283,7 @@ const LookupPage = () => {
                     <CardContent className="p-4">
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <h3 className="font-semibold text-gray-900 dark:text-white">
+                          <h3 className="font-semibold text-gray-900 dark:text-black">
                             {courseClass.courseName}
                           </h3>
                           <Badge className={courseClass.currentStudents >= courseClass.maxStudents 
@@ -334,7 +334,7 @@ const LookupPage = () => {
                   <Card key={semester.semesterId} className="hover:shadow-lg transition-shadow">
                     <CardContent className="p-4">
                       <div className="space-y-2">
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                        <h3 className="font-semibold text-gray-900 dark:text-black">
                           {semester.semesterName}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">

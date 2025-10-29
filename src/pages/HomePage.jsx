@@ -101,14 +101,14 @@ const HomePage = () => {
       color: 'bg-pink-500',
       href: '/profile'
     },
-    {
-      id: 'progress',
-      title: 'Theo dõi tiến độ học',
-      description: 'Theo dõi tiến độ học tập và thành tích cá nhân',
-      icon: TrendingUp,
-      color: 'bg-indigo-500',
-      href: '/progress'
-    },
+    // {
+    //   id: 'progress',
+    //   title: 'Theo dõi tiến độ học',
+    //   description: 'Theo dõi tiến độ học tập và thành tích cá nhân',
+    //   icon: TrendingUp,
+    //   color: 'bg-indigo-500',
+    //   href: '/progress'
+    // },
     {
       id: 'lookup',
       title: 'Tra cứu thông tin',
@@ -163,12 +163,12 @@ const HomePage = () => {
         <>
           {/* Welcome Section */}
           <div className="text-center space-y-4 mb-6">
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-black">
               Chào mừng, {dashboardData?.student?.fullName || 'Sinh viên'}!
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            {/* <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
               Quản lý học tập và thông tin sinh viên một cách dễ dàng và hiệu quả
-            </p>
+            </p> */}
             {dashboardData?.currentSemester && (
               <div className="inline-flex items-center px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm font-medium">
                 <Calendar className="h-4 w-4 mr-2" />
@@ -232,31 +232,6 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Clock className="h-5 w-5" />
-            <span>Thao tác nhanh</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button variant="outline" className="h-20 flex flex-col space-y-2">
-              <Calendar className="h-6 w-6" />
-              <span>Xem lịch học hôm nay</span>
-            </Button>
-            <Button variant="outline" className="h-20 flex flex-col space-y-2">
-              <Award className="h-6 w-6" />
-              <span>Xem điểm mới nhất</span>
-            </Button>
-            <Button variant="outline" className="h-20 flex flex-col space-y-2">
-              <Bell className="h-6 w-6" />
-              <span>Thông báo mới</span>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
         </>
       )}
     </div>
