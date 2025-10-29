@@ -48,7 +48,7 @@ const Sidebar = ({
   const actionItems = [
     ...(showBack && onBack ? [{ id: 'back', label: 'Quay lại', icon: ArrowLeft, action: onBack, description: 'Quay về trang trước' }] : []),
     ...(showRefresh && onRefresh ? [{ id: 'refresh', label: 'Làm mới', icon: RefreshCw, action: onRefresh, description: 'Tải lại dữ liệu' }] : []),
-    ...(onThemeToggle ? [{ id: 'theme', label: isDark ? 'Chế độ sáng' : 'Chế độ tối', icon: isDark ? Sun : Moon, action: onThemeToggle, description: 'Chuyển đổi chế độ sáng/tối' }] : []),
+    ...(onThemeToggle ? [{ id: 'theme', label: isDark ? 'Chế độ sáng' : 'Chế độ tối', icon: isDark ? Sun : Moon, action: onThemeToggle, description: 'Chuyển đổi chế độ sáng/tối (tạm thời ko hoạt động)' }] : []),
     ...(isAuth && onLogout ? [{ id: 'logout', label: "Đăng xuất", icon: LogOut, action: onLogout, description: "Đăng xuất khỏi hệ thống" }] : [])
   ];
 
