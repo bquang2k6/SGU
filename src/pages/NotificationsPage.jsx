@@ -127,14 +127,6 @@ const NotificationsPage = () => {
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-black">
-            Thông báo
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-2">
-            Xem và quản lý thông báo từ trường
-          </p>
-        </div>
         <div className="flex items-center space-x-2">
           <Button variant="outline" size="sm">
             <Filter className="h-4 w-4 mr-2" />
@@ -148,73 +140,34 @@ const NotificationsPage = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Tổng thông báo</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-black">
-                  {notifications.length}
-                </p>
-              </div>
-              <Bell className="h-8 w-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Chưa đọc</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-black">
-                  {unreadCount}
-                </p>
-              </div>
-              <AlertCircle className="h-8 w-8 text-yellow-500" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Quan trọng</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-black">
-                  {notifications.filter(n => n.isImportant).length}
-                </p>
-              </div>
-              <XCircle className="h-8 w-8 text-red-500" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Đã đọc</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-black">
-                  {notifications.filter(n => n.isRead).length}
-                </p>
-              </div>
-              <CheckCircle className="h-8 w-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
       <Tabs defaultValue="all" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6">
-          {categories.map((category) => (
-            <TabsTrigger 
-              key={category.id} 
-              value={category.id}
-              onClick={() => setFilter(category.id)}
-            >
-              {category.label} ({category.count})
-            </TabsTrigger>
-          ))}
-        </TabsList>
+        <div className="overflow-x-auto scrollbar-hide">
+          <TabsList className="flex sm:grid sm:grid-cols-6 bg-blue-50 dark:bg-blue-900/30 rounded-lg p-1 gap-1 min-w-max sm:min-w-0">
+            {categories.map(cat => (
+              <TabsTrigger
+                key={cat.id}
+                value={cat.id}
+                onClick={() => setFilter(cat.id)}
+                className="
+                  data-[state=active]:bg-blue-500 data-[state=active]:text-white 
+                  rounded-md px-4 py-2 whitespace-nowrap transition-all 
+                  flex-shrink-0 text-sm sm:text-base
+                "
+              >
+                {cat.label} ({cat.count})
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
+        <style jsx>{`
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+          .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+        `}</style>
 
         <TabsContent value={filter} className="space-y-4">
           <div className="space-y-4">
@@ -234,7 +187,7 @@ const NotificationsPage = () => {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-2">
                         <h3 className={`font-semibold ${
-                          !notification.isRead ? 'text-gray-900 dark:text-black' : 'text-gray-700 dark:text-gray-300'
+                          !notification.isRead ? 'text-gray-900 dark:text-black' : 'text-gray-100 dark:text-gray-300'
                         }`}>
                           {notification.title}
                         </h3>
@@ -250,7 +203,7 @@ const NotificationsPage = () => {
                         </div>
                       </div>
                       <p className={`text-sm mb-2 ${
-                        !notification.isRead ? 'text-gray-700 dark:text-gray-300' : 'text-gray-600 dark:text-gray-400'
+                        !notification.isRead ? '' : 'text-gray-600 dark:text-gray-400'
                       }`}>
                         {notification.content || notification.message}
                       </p>
@@ -319,7 +272,7 @@ const NotificationsPage = () => {
               </div>
               
               <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col space-y-3">
                   <div className="text-sm text-gray-500 dark:text-gray-400">
                     ID thông báo: #{selectedNotification.id}
                   </div>
@@ -333,9 +286,9 @@ const NotificationsPage = () => {
                         Đánh dấu đã đọc
                       </Button>
                     )}
-                    <Button size="sm">
+                    {/* <Button size="sm">
                       Thực hiện hành động
-                    </Button>
+                    </Button> */}
                   </div>
                 </div>
               </div>
