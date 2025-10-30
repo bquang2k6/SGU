@@ -9,7 +9,7 @@ import { toast } from 'react-hot-toast';
 
 const SchedulePage = () => {
   const [mySchedule, setMySchedule] = useState([]);
-  const [myRegistrations, setMyRegistrations] = useState([]);
+  // const [myRegistrations, setMyRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedDay, setSelectedDay] = useState('all');
 
@@ -31,18 +31,18 @@ const SchedulePage = () => {
   const fetchScheduleData = async () => {
     try {
       setLoading(true);
-      const [scheduleResult, registrationsResult] = await Promise.all([
-        scheduleService.getMySchedule(),
-        scheduleService.getMyRegistrations()
+      const [scheduleResult] = await Promise.all([
+        scheduleService.getMySchedule()
+        // scheduleService.getMyRegistrations()
       ]);
 
       if (scheduleResult.success) {
         setMySchedule(scheduleResult.data);
       }
 
-      if (registrationsResult.success) {
-        setMyRegistrations(registrationsResult.data);
-      }
+      // if (registrationsResult.success) {
+      //   setMyRegistrations(registrationsResult.data);
+      // }
     } catch (error) {
       console.error('Lỗi tải lịch học:', error);
       toast.error('Có lỗi xảy ra khi tải lịch học');
@@ -139,11 +139,11 @@ const SchedulePage = () => {
       </div>
 
       <Tabs defaultValue="weekly" className="space-y-4">
-        <TabsList>
+        {/* <TabsList>
           <TabsTrigger value="weekly">Lịch tuần</TabsTrigger>
-          {/* <TabsTrigger value="list">Danh sách lịch học</TabsTrigger> */}
+          <TabsTrigger value="list">Danh sách lịch học</TabsTrigger>
           <TabsTrigger value="registrations">Danh sách đăng ký</TabsTrigger>
-        </TabsList>
+        </TabsList> */}
 
         <TabsContent value="weekly" className="space-y-4">
           {/* Day Filter */}
@@ -273,7 +273,7 @@ const SchedulePage = () => {
           </Card>
         </TabsContent> */}
 
-        <TabsContent value="registrations" className="space-y-4">
+        {/* <TabsContent value="registrations" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Danh sách đăng ký</CardTitle>
@@ -308,7 +308,7 @@ const SchedulePage = () => {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
     </div>
   );

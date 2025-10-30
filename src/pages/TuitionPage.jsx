@@ -175,12 +175,60 @@ const TuitionPage = () => {
       </div>
 
       <Tabs defaultValue="all" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="all">Tất cả</TabsTrigger>
-          <TabsTrigger value="pending">Chờ thanh toán</TabsTrigger>
-          <TabsTrigger value="overdue">Quá hạn</TabsTrigger>
-          <TabsTrigger value="paid">Đã thanh toán</TabsTrigger>
+      <div className="overflow-x-auto scrollbar-hide">
+        <TabsList className="flex sm:grid sm:grid-cols-4 bg-gray-50 dark:bg-white-100/30 rounded-lg p-1 gap-0 min-w-max sm:min-w-0">
+          <TabsTrigger
+            value="all"
+            className="
+              data-[state=active]:bg-gray-400 data-[state=active]:text-white 
+              rounded-md px-4 py-2 whitespace-nowrap transition-all 
+              flex-shrink-0 text-sm sm:text-base -ml-1
+            "
+          >
+            Tất cả
+          </TabsTrigger>
+          <TabsTrigger
+            value="pending"
+            className="
+              data-[state=active]:bg-gray-400 data-[state=active]:text-white 
+              rounded-md px-4 py-2 whitespace-nowrap transition-all 
+              flex-shrink-0 text-sm sm:text-base -ml-1 -mr-1
+            "
+          >
+            Chờ thanh toán
+          </TabsTrigger>
+          <TabsTrigger
+            value="overdue"
+            className="
+              data-[state=active]:bg-gray-400 data-[state=active]:text-white 
+              rounded-md px-4 py-2 whitespace-nowrap transition-all 
+              flex-shrink-0 text-sm sm:text-base -ml-1 -mr-1
+            "
+          >
+            Quá hạn
+          </TabsTrigger>
+          <TabsTrigger
+            value="paid"
+            className="
+              data-[state=active]:bg-gray-400 data-[state=active]:text-white 
+              rounded-md px-4 py-2 whitespace-nowrap transition-all 
+              flex-shrink-0 text-sm sm:text-base -ml-1 -mr-1
+            "
+          >
+            Đã thanh toán
+          </TabsTrigger>
         </TabsList>
+      </div>
+
+      <style jsx>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
 
         <TabsContent value="all" className="space-y-4">
           <div className="space-y-4">

@@ -45,9 +45,9 @@ const ClassesPage = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">Lớp học của tôi</h1>
-          <p className="text-gray-500">Theo dõi danh sách lớp bạn đang học</p>
+          {/* <p className="text-gray-500">Theo dõi danh sách lớp bạn đang học</p> */}
         </div>
-        <Button><BookOpen className="h-4 w-4 mr-2" /> Thêm lớp học</Button>
+        <Button variant="outline"><BookOpen className="h-4 w-4 mr-2" /> Thêm lớp học</Button>
       </div>
 
       <Tabs defaultValue="list" className="space-y-4">

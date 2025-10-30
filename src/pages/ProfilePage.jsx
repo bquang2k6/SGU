@@ -177,12 +177,12 @@ const ProfilePage = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-black">
+          {/* <h1 className="text-2xl font-bold text-gray-900 dark:text-black">
             Thông tin cá nhân
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-2">
+          </h1> */}
+          {/* <p className="text-gray-600 dark:text-gray-300 mt-2">
             Quản lý thông tin cá nhân và cài đặt tài khoản
-          </p>
+          </p> */}
         </div>
         <div className="flex items-center space-x-2">
           {isEditing ? (
@@ -190,13 +190,13 @@ const ProfilePage = () => {
               <Button variant="outline" onClick={() => setIsEditing(false)}>
                 Hủy
               </Button>
-              <Button onClick={handleSaveProfile}>
+              <Button variant="outline" onClick={handleSaveProfile}>
                 <Save className="h-4 w-4 mr-2" />
                 Lưu thay đổi
               </Button>
             </>
           ) : (
-            <Button onClick={() => setIsEditing(true)}>
+            <Button variant="outline" onClick={() => setIsEditing(true)}>
               <Edit className="h-4 w-4 mr-2" />
               Chỉnh sửa
             </Button>
@@ -208,7 +208,7 @@ const ProfilePage = () => {
         <TabsList>
           <TabsTrigger value="profile">Thông tin cá nhân</TabsTrigger>
           <TabsTrigger value="password">Đổi mật khẩu</TabsTrigger>
-          <TabsTrigger value="settings">Cài đặt</TabsTrigger>
+          {/* <TabsTrigger value="settings">Cài đặt</TabsTrigger> */}
         </TabsList>
 
         <TabsContent value="profile" className="space-y-4">
@@ -355,9 +355,9 @@ const ProfilePage = () => {
           <Card>
             <CardHeader>
               <CardTitle>Đổi mật khẩu</CardTitle>
-              <CardDescription>
+              {/* <CardDescription>
                 Thay đổi mật khẩu để bảo mật tài khoản của bạn
-              </CardDescription>
+              </CardDescription> */}
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -391,7 +391,7 @@ const ProfilePage = () => {
                 />
               </div>
               <div className="pt-4">
-                <Button onClick={handleChangePassword}>
+                <Button variant="outline" onClick={handleChangePassword}>
                   <Lock className="h-4 w-4 mr-2" />
                   Đổi mật khẩu
                 </Button>
@@ -400,7 +400,7 @@ const ProfilePage = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="settings" className="space-y-4">
+        {/* <TabsContent value="settings" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Cài đặt tài khoản</CardTitle>
@@ -452,7 +452,7 @@ const ProfilePage = () => {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
     </div>
   );

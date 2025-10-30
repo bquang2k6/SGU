@@ -140,14 +140,14 @@ const RegistrationPage = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-black">
+          {/* <h1 className="text-3xl font-bold text-gray-900 dark:text-black">
             Đăng ký môn học
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-2">
+          </h1> */}
+          {/* <p className="text-gray-600 dark:text-gray-300 mt-2">
             Đăng ký và quản lý các môn học trong học kỳ
-          </p>
+          </p> */}
         </div>
-        <Button onClick={fetchData}>
+        <Button variant="outline" onClick={fetchData}>
           <BookOpen className="h-4 w-4 mr-2" />
           Làm mới
         </Button>

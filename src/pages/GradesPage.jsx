@@ -98,21 +98,21 @@ const GradesPage = () => {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-black">
+          {/* <h1 className="text-3xl font-bold text-gray-900 dark:text-black">
             Điểm và kết quả học tập
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-2">
+          </h1> */}
+          {/* <p className="text-gray-600 dark:text-gray-300 mt-2">
             Theo dõi điểm số và kết quả học tập của bạn
-          </p>
+          </p> */}
         </div>
-        <Button>
+        <Button variant="outline">
           <Download className="h-4 w-4 mr-2" />
           Xuất bảng điểm
         </Button>
       </div>
 
       {/* Overall Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -165,7 +165,7 @@ const GradesPage = () => {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </div> */}
 
       <Tabs defaultValue="subjects" className="space-y-4">
         <TabsList>

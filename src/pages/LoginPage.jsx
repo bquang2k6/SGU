@@ -68,9 +68,9 @@ const LoginPage = ({ onLoginSuccess }) => {
             <CardTitle className="text-2xl font-bold text-gray-900">
               Đăng nhập SGU
             </CardTitle>
-            <CardDescription className="text-gray-600">
+            {/* <CardDescription className="text-gray-600">
               Đăng nhập để truy cập hệ thống quản lý sinh viên
-            </CardDescription>
+            </CardDescription> */}
           </CardHeader>
           
           <CardContent>
@@ -135,14 +135,14 @@ const LoginPage = ({ onLoginSuccess }) => {
               </Button>
             </form>
 
-            <div className="mt-6 text-center">
+            {/* <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Quên mật khẩu?{' '}
                 <a href="#" className="text-blue-600 hover:text-blue-500 font-medium">
                   Khôi phục ngay
                 </a>
               </p>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
 
