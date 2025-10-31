@@ -8,7 +8,7 @@ Dự án giao diện người dùng (frontend) cho hệ thống **Quản lý Sin
 
 Thực hiện các bước sau để chạy dự án trên máy của bạn:
 
-### 1️⃣ Di chuyển vào thư mục gốc của dự án
+### Di chuyển vào thư mục gốc của dự án
 ```bash
 cd ten-thu-muc-du-an
 
