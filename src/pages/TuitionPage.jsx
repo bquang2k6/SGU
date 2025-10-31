@@ -181,7 +181,7 @@ const TuitionPage = () => {
       </div>
 
       <Tabs defaultValue="all" className="space-y-4">
-      <div className="overflow-x-auto scrollbar-hide">
+      {/* <div className="overflow-x-auto scrollbar-hide">
         <TabsList className="flex sm:grid sm:grid-cols-4 bg-gray-50 dark:bg-white-100/30 rounded-lg p-1 gap-0 min-w-max sm:min-w-0">
           <TabsTrigger
             value="all"
@@ -234,7 +234,7 @@ const TuitionPage = () => {
           -ms-overflow-style: none;
           scrollbar-width: none;
         }
-      `}</style>
+      `}</style> */}
 
         <TabsContent value="all" className="space-y-4">
           <div className="space-y-4">
@@ -288,12 +288,12 @@ const TuitionPage = () => {
                         {formatCurrency(fee.remainingAmount)}
                       </p>
                     </div>
-                    <div>
+                    {/* <div>
                       <p className="text-gray-600 dark:text-gray-400">Phí/tín chỉ</p>
                       <p className="text-lg font-semibold text-gray-900 dark:text-black">
                         {formatCurrency(fee.feePerCredit)}
                       </p>
-                    </div>
+                    </div> */}
                   </div>
                 </CardContent>
               </Card>
@@ -461,10 +461,10 @@ const TuitionPage = () => {
                   <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Tổng tín chỉ</label>
                   <p className="text-gray-900 dark:text-black">{selectedFee.totalCredits}</p>
                 </div>
-                <div>
+                {/* <div>
                   <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Phí/tín chỉ</label>
                   <p className="text-gray-900 dark:text-black">{formatCurrency(selectedFee.feePerCredit)}</p>
-                </div>
+                </div> */}
                 <div>
                   <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Tổng số tiền</label>
                   <p className="text-gray-900 dark:text-black">{formatCurrency(selectedFee.totalAmount)}</p>

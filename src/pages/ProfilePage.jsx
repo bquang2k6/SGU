@@ -202,7 +202,7 @@ const ProfilePage = () => {
         <TabsContent value="profile" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Avatar Section */}
-            <Card>
+            {/* <Card>
               <CardHeader>
                 <CardTitle>Ảnh đại diện</CardTitle>
                 <CardDescription>
@@ -223,7 +223,7 @@ const ProfilePage = () => {
                   </Button>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Personal Information */}
             <div className="lg:col-span-2 space-y-6">
@@ -242,7 +242,7 @@ const ProfilePage = () => {
                         id="fullName"
                         value={userInfo.fullName}
                         onChange={(e) => handleInputChange('fullName', e.target.value)}
-                        disabled={!isEditing}
+                        disabled
                       />
                     </div>
                     <div className="space-y-2">
@@ -251,7 +251,7 @@ const ProfilePage = () => {
                         id="studentId"
                         value={userInfo.studentId}
                         disabled
-                        className="bg-gray-100 dark:bg-gray-800"
+                        className="text-black"
                       />
                     </div>
                     <div className="space-y-2">
@@ -261,7 +261,7 @@ const ProfilePage = () => {
                         type="email"
                         value={userInfo.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
-                        disabled={!isEditing}
+                        disabled
                       />
                     </div>
                     <div className="space-y-2">
@@ -280,16 +280,16 @@ const ProfilePage = () => {
                         type="date"
                         value={userInfo.dateOfBirth}
                         onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
-                        disabled={!isEditing}
+                        disabled
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="year">Năm nhập học</Label>
+                      <Label htmlFor="totalCredits">Số tín chỉ</Label>
                       <Input
-                        id="year"
-                        value={userInfo.year}
+                        id="totalCredits"
+                        value={userInfo.totalCredits}
                         disabled
-                        className="bg-gray-100 dark:bg-gray-800"
+                        // className="bg-gray-100 dark:bg-gray-800"
                       />
                     </div>
                   </div>
@@ -300,6 +300,24 @@ const ProfilePage = () => {
                       value={userInfo.address}
                       onChange={(e) => handleInputChange('address', e.target.value)}
                       disabled={!isEditing}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="gender">Giới tính</Label>
+                    <Input
+                      id="gender"
+                      value={userInfo.gender}
+                      onChange={(e) => handleInputChange('gender', e.target.value)}
+                      disabled
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="gpa">GPA</Label>
+                    <Input
+                      id="gpa"
+                      value={userInfo.gpa?.toFixed(1)}
+                      onChange={(e) => handleInputChange('gpa', e.target.value)}
+                      disabled
                     />
                   </div>
                 </CardContent>
@@ -320,7 +338,7 @@ const ProfilePage = () => {
                         id="major"
                         value={userInfo.major}
                         disabled
-                        className="bg-gray-100 dark:bg-gray-800"
+                        // className="bg-gray-100 dark:bg-gray-800"
                       />
                     </div>
                     <div className="space-y-2">
@@ -329,7 +347,7 @@ const ProfilePage = () => {
                         id="class"
                         value={userInfo.class}
                         disabled
-                        className="bg-gray-100 dark:bg-gray-800"
+                        // className="text-gray-100 dark:bg-gray-800"
                       />
                     </div>
                   </div>

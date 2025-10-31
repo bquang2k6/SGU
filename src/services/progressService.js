@@ -33,33 +33,33 @@ class ProgressService {
   }
 
   // ✅ Kiểm tra điều kiện tiên quyết
-  async checkPrerequisites(subjectId) {
-    const username = this.getUsername();
-    if (!username) {
-      return { success: false, message: 'Không tìm thấy username trong localStorage', data: null };
-    }
+  // async checkPrerequisites(subjectId) {
+  //   const username = this.getUsername();
+  //   if (!username) {
+  //     return { success: false, message: 'Không tìm thấy username trong localStorage', data: null };
+  //   }
 
-    try {
-      const response = await apiService.post(API_ENDPOINTS.CHECK_PREREQUISITES, {
-        studentId: username,
-        subjectId
-      });
-      return {
-        success: true,
-        data: {
-          canRegister: response.canRegister,
-          missingPrerequisites: response.missingPrerequisites || []
-        }
-      };
-    } catch (error) {
-      console.error('Check prerequisites error:', error);
-      return {
-        success: false,
-        message: error.message || 'Có lỗi xảy ra khi kiểm tra điều kiện tiên quyết',
-        data: null
-      };
-    }
-  }
+  //   try {
+  //     const response = await apiService.post(API_ENDPOINTS.CHECK_PREREQUISITES, {
+  //       studentId: username,
+  //       subjectId
+  //     });
+  //     return {
+  //       success: true,
+  //       data: {
+  //         canRegister: response.canRegister,
+  //         missingPrerequisites: response.missingPrerequisites || []
+  //       }
+  //     };
+  //   } catch (error) {
+  //     console.error('Check prerequisites error:', error);
+  //     return {
+  //       success: false,
+  //       message: error.message || 'Có lỗi xảy ra khi kiểm tra điều kiện tiên quyết',
+  //       data: null
+  //     };
+  //   }
+  // }
 
   // ✅ Lấy thông tin học phí
   async getTuitionFees() {

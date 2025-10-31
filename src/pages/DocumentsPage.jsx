@@ -313,7 +313,7 @@ const DocumentsPage = () => {
                 </div>
               </div>
               
-              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+              {/* <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
                 <h3 className="font-semibold text-gray-900 dark:text-black mb-2">
                   Hướng dẫn đăng ký:
                 </h3>
@@ -332,7 +332,7 @@ const DocumentsPage = () => {
                 <Button variant="outline" onClick={() => setSelectedDocument(null)}>
                   Hủy
                 </Button>
-              </div>
+              </div> */}
             </CardContent>
           </Card>
         </div>

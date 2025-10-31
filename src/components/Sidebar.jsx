@@ -40,7 +40,7 @@ const Sidebar = ({
     { id: 'grades', label: 'Xem điểm và kết quả học tập', icon: Award, description: 'Xem điểm số và kết quả học tập' },
     { id: 'documents', label: 'Đăng ký giấy', icon: FileText, description: 'Đăng ký các loại giấy tờ cần thiết' },
     { id: 'notifications', label: 'Nhận thông báo', icon: Bell, description: 'Xem thông báo và cập nhật mới' },
-    { id: 'profile', label: 'Cập nhật thông tin cá nhân', icon: User, description: 'Quản lý thông tin cá nhân và đổi mật khẩu' },
+    { id: 'profile', label: 'Cập nhật thông tin cá nhân', icon: User, description: 'Thông tin cá nhân và đổi mật khẩu' },
     { id: 'lookup', label: 'Tra cứu', icon: Search, description: 'Tra cứu thông tin khoa, ngành, môn học' },
     { id: 'tuition', label: 'Học phí', icon: DollarSign, description: 'Xem và thanh toán học phí' }
   ];
