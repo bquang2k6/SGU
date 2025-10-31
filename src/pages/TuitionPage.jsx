@@ -34,7 +34,11 @@ const TuitionPage = () => {
     }
   };
 
-  const getPaymentStatusColor = (status) => {
+  const getPaymentStatusColor = (status, remainingAmount) => {
+    if (remainingAmount === 0)
+      return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
+    if (remainingAmount > 0)
+      return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
     switch (status) {
       case 'paid': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
       case 'pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
@@ -44,7 +48,9 @@ const TuitionPage = () => {
     }
   };
 
-  const getPaymentStatusText = (status) => {
+  const getPaymentStatusText = (status, remainingAmount) => {
+    if (remainingAmount === 0) return 'Hoàn thành';
+    if (remainingAmount > 0) return 'Chưa hoàn thành';
     switch (status) {
       case 'paid': return 'Đã thanh toán';
       case 'pending': return 'Chờ thanh toán';
@@ -249,10 +255,10 @@ const TuitionPage = () => {
                       </p>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Badge className={getPaymentStatusColor(fee.paymentStatus)}>
+                      <Badge className={getPaymentStatusColor(fee.paymentStatus, fee.remainingAmount)}>
                         <div className="flex items-center space-x-1">
                           {getPaymentStatusIcon(fee.paymentStatus)}
-                          <span>{getPaymentStatusText(fee.paymentStatus)}</span>
+                          <span>{getPaymentStatusText(fee.paymentStatus, fee.remainingAmount)}</span>
                         </div>
                       </Badge>
                       {fee.isOverdue && (
@@ -313,10 +319,10 @@ const TuitionPage = () => {
                         Hạn thanh toán: {formatDate(fee.dueDate)}
                       </p>
                     </div>
-                    <Badge className={getPaymentStatusColor(fee.paymentStatus)}>
+                    <Badge className={getPaymentStatusColor(fee.paymentStatus, fee.remainingAmount)}>
                       <div className="flex items-center space-x-1">
                         {getPaymentStatusIcon(fee.paymentStatus)}
-                        <span>{getPaymentStatusText(fee.paymentStatus)}</span>
+                        <span>{getPaymentStatusText(fee.paymentStatus, fee.remainingAmount)}</span>
                       </div>
                     </Badge>
                   </div>
@@ -401,10 +407,10 @@ const TuitionPage = () => {
                         Đã thanh toán: {formatDate(fee.dueDate)}
                       </p>
                     </div>
-                    <Badge className={getPaymentStatusColor(fee.paymentStatus)}>
+                    <Badge className={getPaymentStatusColor(fee.paymentStatus, fee.remainingAmount)}>
                       <div className="flex items-center space-x-1">
                         {getPaymentStatusIcon(fee.paymentStatus)}
-                        <span>{getPaymentStatusText(fee.paymentStatus)}</span>
+                        <span>{getPaymentStatusText(fee.paymentStatus, fee.remainingAmount)}</span>
                       </div>
                     </Badge>
                   </div>
