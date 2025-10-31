@@ -41,7 +41,7 @@ class ApiService {
         await authService.logout();
 
         // 👉 Chuyển hướng về trang login
-        window.location.href = '/login';
+        window.location.href = '/';
         return Promise.reject(new Error('Authentication required - auto logout'));
       }
 
