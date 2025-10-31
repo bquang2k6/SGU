@@ -44,3 +44,7 @@ Dưới đây là danh sách các API hiện tại có vấn đề hoặc cần 
 **Lỗi:** `400`
 **Phương thức:** `POST`  
 **Endpoint:** `crud/registrations/create/`
+
+---
+### cập nhật thông tin cá nhân
+**không thay đổi được mail, mặc dù payload đã truyền lên server **

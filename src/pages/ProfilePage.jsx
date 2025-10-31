@@ -15,21 +15,8 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
   const [loading, setLoading] = useState(true);
+  const [userInfo, setUserInfo] = useState({});
 
-  // Lấy thông tin user từ localStorage hoặc API
-  const [userInfo, setUserInfo] = useState({
-    id: '1',
-    studentId: '2021001234',
-    fullName: 'Nguyễn Văn A',
-    email: 'nguyenvana@sgu.edu.vn',
-    phone: '0123456789',
-    dateOfBirth: '2003-01-15',
-    address: '123 Đường ABC, Quận 1, TP.HCM',
-    major: 'Công nghệ thông tin',
-    class: 'CNTT01',
-    year: '2021',
-    avatar: null
-  });
 
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
@@ -51,17 +38,18 @@ const ProfilePage = () => {
           ...prev,
           id: profileData.studentId,
           studentId: profileData.studentCode,
-          fullName: profileData.user?.fullName || profileData.fullName,
-          email: profileData.user?.email,
-          phone: profileData.user?.phone,
+          fullName: profileData.fullName,
+          email: profileData.email,
+          phone: profileData.phone,
           dateOfBirth: profileData.dateOfBirth,
-          address: profileData.user?.address,
+          address: profileData.address,
+          gender: profileData.gender,
           major: profileData.studentClass?.major?.majorName,
           class: profileData.studentClass?.className,
-          year: profileData.enrollmentYear,
+          year: profileData.enrollmentYear || '',
           gpa: profileData.gpa,
           totalCredits: profileData.totalCredits
-        }));
+        }));        
       } else {
         // Fallback to localStorage if API fails
         const savedUser = AuthStorage.getCurrentUser();
