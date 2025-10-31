@@ -206,7 +206,7 @@ const RegistrationPage = () => {
                   <div className="pt-3 border-t border-gray-200 dark:border-gray-700 space-y-2">
                     <div className="flex space-x-2">
                       <Button 
-                        size="sm" 
+                        size="sx" 
                         variant="outline" 
                         className="flex-1"
                         onClick={() => handleCheckPrerequisites(course.courseClassId, course.subject?.subjectId)}
@@ -215,7 +215,7 @@ const RegistrationPage = () => {
                         Kiểm tra tiên quyết
                       </Button>
                       <Button 
-                        size="sm" 
+                        size="sx" 
                         variant="outline" 
                         className="flex-1"
                         onClick={() => handleCheckScheduleConflict(course.courseClassId)}
@@ -225,6 +225,7 @@ const RegistrationPage = () => {
                       </Button>
                     </div>
                     <Button 
+                      variant="outline"
                       className="w-full" 
                       size="sm"
                       onClick={() => handleRegisterCourse(course.courseClassId, semesters[0]?.semesterId)}

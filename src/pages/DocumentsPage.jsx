@@ -172,7 +172,7 @@ const DocumentsPage = () => {
                     </span>
                   </div>
                   <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
-                    <Button className="w-full" size="sm" onClick={() => setShowCreateForm(true)}>
+                    <Button variant="outline" className="w-full" size="sm" onClick={() => setShowCreateForm(true)}>
                       Đăng ký
                     </Button>
                   </div>
@@ -326,7 +326,7 @@ const DocumentsPage = () => {
               </div>
               
               <div className="flex space-x-3 pt-4">
-                <Button className="flex-1">
+                <Button variant="outline" className="flex-1">
                   Đăng ký ngay
                 </Button>
                 <Button variant="outline" onClick={() => setSelectedDocument(null)}>
