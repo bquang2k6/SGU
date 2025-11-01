@@ -25,8 +25,9 @@ const HomePage = () => {
 
       if (profileResult.success && profileResult.data) {
         const p = profileResult.data;
-        setUserInfo({
-          studentId: p.studentCode,
+        const profileData = {
+          studentId: p.studentId,
+          studentCode: p.studentCode,
           fullName: p.fullName,
           email: p.email,
           phone: p.phone,
@@ -38,7 +39,10 @@ const HomePage = () => {
           year: p.enrollmentYear,
           gpa: p.gpa,
           totalCredits: p.totalCredits,
-        });
+        };
+
+        setUserInfo(profileData);
+        localStorage.setItem('studentInfo', JSON.stringify(profileData));
       } else {
         const saved = AuthStorage.getCurrentUser();
         if (saved) setUserInfo(saved);
@@ -67,12 +71,11 @@ const HomePage = () => {
   ];
 
   const stats = [
-    { label: 'Mã sinh viên', value: userInfo?.studentId || 'N/A', icon: User },
+    { label: 'Mã sinh viên', value: userInfo?.studentCode || 'N/A', icon: User },
     { label: 'GPA', value: userInfo?.gpa ? userInfo.gpa.toFixed(1) : '0.0', icon: Award },
     { label: 'Thông báo chưa đọc', value: unreadNotifications.toString(), icon: Bell },
     { label: 'Tín chỉ', value: userInfo?.totalCredits || '0', icon: FileText },
     { label: 'Lớp học', value: userInfo?.class || 'N/A', icon: BookOpen },
-    // { label: 'Năm nhập học', value: userInfo?.year || 'N/A', icon: Calendar },
   ];
 
   return (
@@ -88,9 +91,6 @@ const HomePage = () => {
             <h1 className="text-4xl font-bold text-gray-900 dark:text-black">
               Chào mừng, {userInfo?.fullName || 'Sinh viên'}!
             </h1>
-            {/* <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Quản lý học tập và thông tin sinh viên một cách dễ dàng
-            </p> */}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

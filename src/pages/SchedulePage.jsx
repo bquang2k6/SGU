@@ -1,28 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { Badge } from '../components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { Calendar, Clock, MapPin, Users, BookOpen, Download } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users } from 'lucide-react';
 import { scheduleService } from '../services/scheduleService';
 import { toast } from 'react-hot-toast';
 
 const SchedulePage = () => {
   const [mySchedule, setMySchedule] = useState([]);
-  // const [myRegistrations, setMyRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedDay, setSelectedDay] = useState('all');
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [showAllWeeks, setShowAllWeeks] = useState(false);
 
-  const daysOfWeek = [
-    { id: 'all', label: 'Tất cả', value: 'all' },
-    { id: 'monday', label: 'Thứ 2', value: 'monday' },
-    { id: 'tuesday', label: 'Thứ 3', value: 'tuesday' },
-    { id: 'wednesday', label: 'Thứ 4', value: 'wednesday' },
-    { id: 'thursday', label: 'Thứ 5', value: 'thursday' },
-    { id: 'friday', label: 'Thứ 6', value: 'friday' },
-    { id: 'saturday', label: 'Thứ 7', value: 'saturday' },
-    { id: 'sunday', label: 'Chủ nhật', value: 'sunday' }
-  ];
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  const today = new Date();
 
   useEffect(() => {
     fetchScheduleData();
@@ -31,18 +22,18 @@ const SchedulePage = () => {
   const fetchScheduleData = async () => {
     try {
       setLoading(true);
-      const [scheduleResult] = await Promise.all([
-        scheduleService.getMySchedule()
-        // scheduleService.getMyRegistrations()
-      ]);
+      const result = await scheduleService.getMySchedule();
+      if (result.success) {
+        const data = result.data || [];
+        setMySchedule(data);
 
-      if (scheduleResult.success) {
-        setMySchedule(scheduleResult.data);
+        // tự động mở chi tiết hôm nay nếu có lịch
+        const todayStr = today.toISOString().split('T')[0];
+        const todayItem = data.find(item => item.datetime?.startsWith(todayStr));
+        if (todayItem) {
+          setSelectedDate({ date: today, dateString: todayStr });
+        }
       }
-
-      // if (registrationsResult.success) {
-      //   setMyRegistrations(registrationsResult.data);
-      // }
     } catch (error) {
       console.error('Lỗi tải lịch học:', error);
       toast.error('Có lỗi xảy ra khi tải lịch học');
@@ -51,265 +42,161 @@ const SchedulePage = () => {
     }
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'registered': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300';
-      case 'pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
-      case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
-    }
-  };
+  const startOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+  const endOfMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+  const totalDays = endOfMonth.getDate();
 
-  const getStatusText = (status) => {
-    switch (status) {
-      case 'registered': return 'Đã đăng ký';
-      case 'pending': return 'Chờ duyệt';
-      case 'cancelled': return 'Đã hủy';
-      default: return 'Không xác định';
-    }
-  };
+  const days = Array.from({ length: totalDays }, (_, i) => {
+    const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), i + 1);
+    const dateString = date.toISOString().split('T')[0];
+    const hasClass = mySchedule.some(item => item.datetime?.startsWith(dateString));
+    return { date, dateString, hasClass };
+  });
 
-  const getDayColor = (dayOfWeek) => {
-    const colors = {
-      'monday': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
-      'tuesday': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-      'wednesday': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-      'thursday': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
-      'friday': 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300',
-      'saturday': 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300',
-      'sunday': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
-    };
-    return colors[dayOfWeek] || 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300';
-  };
-
-  const getDayLabel = (dayOfWeek) => {
-    const labels = {
-      'monday': 'Thứ 2',
-      'tuesday': 'Thứ 3',
-      'wednesday': 'Thứ 4',
-      'thursday': 'Thứ 5',
-      'friday': 'Thứ 6',
-      'saturday': 'Thứ 7',
-      'sunday': 'Chủ nhật'
-    };
-    return labels[dayOfWeek] || dayOfWeek;
-  };
-
-  const filteredSchedule = selectedDay === 'all' 
-    ? mySchedule 
-    : mySchedule.filter(course => course.dayOfWeek === selectedDay);
-
-  const scheduleByDay = daysOfWeek.slice(1).map(day => ({
-    ...day,
-    courses: mySchedule.filter(course => course.dayOfWeek === day.value)
-  }));
-
-  if (loading) {
-    return (
-      <div className="p-6 space-y-6">
-        <div className="text-center py-10">
-          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Đang tải lịch học...</p>
-        </div>
-      </div>
-    );
+  // Chia tháng thành các tuần
+  const weeks = [];
+  for (let i = 0; i < days.length; i += 7) {
+    weeks.push(days.slice(i, i + 7));
   }
+
+  // Lấy tuần hiện tại
+  const currentWeekIndex = weeks.findIndex(week =>
+    week.some(day => day.date.toDateString() === today.toDateString())
+  );
+  const visibleWeeks = showAllWeeks ? weeks : [weeks[currentWeekIndex] || weeks[0]];
+
+  const selectedCourses = selectedDate
+  ? mySchedule.filter(item => item.datetime?.startsWith(selectedDate.dateString))
+    : [];
 
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-black">
-            Lịch học
-          </h1>
-          {/* <p className="text-gray-600 dark:text-gray-300 mt-2">
-            Xem lịch học và quản lý các môn học đã đăng ký
-          </p> */}
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" onClick={fetchScheduleData}>
-            <Calendar className="h-4 w-4 mr-2" />
-            Làm mới
-          </Button>
-          {/* <Button>
-            <Download className="h-4 w-4 mr-2" />
-            Xuất lịch
-          </Button> */}
-        </div>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-black">Lịch học</h1>
+        <Button variant="outline" onClick={fetchScheduleData}>
+          <Calendar className="h-4 w-4 mr-2" /> Làm mới
+        </Button>
       </div>
 
-      <Tabs defaultValue="weekly" className="space-y-4">
-        {/* <TabsList>
-          <TabsTrigger value="weekly">Lịch tuần</TabsTrigger>
-          <TabsTrigger value="list">Danh sách lịch học</TabsTrigger>
-          <TabsTrigger value="registrations">Danh sách đăng ký</TabsTrigger>
-        </TabsList> */}
-
-        <TabsContent value="weekly" className="space-y-4">
-          {/* Day Filter */}
-          <div className="flex flex-wrap gap-2">
-            {daysOfWeek.map((day) => (
+      {loading ? (
+        <div className="text-center py-10">
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Đang tải lịch học...</p>
+        </div>
+      ) : (
+        <>
+          {/* Lịch dạng tuần */}
+          <Card className="p-4">
+          <CardHeader className="p-0">
+            <div className="flex items-center justify-center space-x-4 py-2">
               <Button
-                key={day.id}
-                variant={selectedDay === day.value ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedDay(day.value)}
+                variant="ghost"
+                size="icon"
+                onClick={() =>
+                  setCurrentMonth(
+                    new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1)
+                  )
+                }
               >
-                {day.label}
+                ←
               </Button>
-            ))}
-          </div>
 
-          {/* Weekly Schedule Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
-            {scheduleByDay.map((day) => (
-              <Card key={day.id} className="min-h-[400px]">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-center">
-                    <Badge className={getDayColor(day.value)}>
-                      {day.label}
-                    </Badge>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  {day.courses.length > 0 ? (
-                    day.courses.map((course, index) => (
-                      <div key={index} className="p-3 bg-gray-50 dark:bg-gray-100 rounded-lg">
-                        <div className="space-y-1">
-                          <h4 className="font-semibold text-sm text-gray-900 dark:text-black">
-                            {course.courseName}
-                          </h4>
-                          <p className="text-xs text-gray-600 dark:text-gray-800">
-                            {course.courseCode}
-                          </p>
-                          <div className="flex items-center text-xs text-gray-500 dark:text-gray-800">
-                            <Clock className="h-3 w-3 mr-1" />
-                            {course.startTime} - {course.endTime}
-                          </div>
-                          <div className="flex items-center text-xs text-gray-500 dark:text-gray-800">
-                            <MapPin className="h-3 w-3 mr-1" />
-                            {course.room}
-                          </div>
-                          <div className="flex items-center text-xs text-gray-500 dark:text-gray-800">
-                            <Users className="h-3 w-3 mr-1" />
-                            {course.teacher}
-                          </div>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center text-gray-500 dark:text-gray-400 text-sm py-8">
-                      Không có lịch học
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
+              <CardTitle className="text-lg font-semibold text-center min-w-[180px]">
+                {currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}
+              </CardTitle>
 
-        {/* <TabsContent value="list" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Danh sách lịch học</CardTitle>
-              <CardDescription>
-                Tất cả các môn học trong lịch học của bạn
-              </CardDescription>
-            </CardHeader>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() =>
+                  setCurrentMonth(
+                    new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1)
+                  )
+                }
+              >
+                →
+              </Button>
+            </div>
+          </CardHeader>
+
             <CardContent>
-              <div className="space-y-4">
-                {filteredSchedule.map((course, index) => (
-                  <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-black">
-                          {course.courseName}
-                        </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {course.courseCode}
-                        </p>
-                      </div>
-                      <Badge className={getDayColor(course.dayOfWeek)}>
-                        {getDayLabel(course.dayOfWeek)}
-                      </Badge>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                      <div className="flex items-center">
-                        <Clock className="h-4 w-4 mr-2 text-gray-500" />
-                        <div>
-                          <p className="text-gray-600 dark:text-gray-400">Thời gian</p>
-                          <p className="text-gray-900 dark:text-black">
-                            {course.startTime} - {course.endTime}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center">
-                        <MapPin className="h-4 w-4 mr-2 text-gray-500" />
-                        <div>
-                          <p className="text-gray-600 dark:text-gray-400">Phòng</p>
-                          <p className="text-gray-900 dark:text-black">{course.room}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center">
-                        <Users className="h-4 w-4 mr-2 text-gray-500" />
-                        <div>
-                          <p className="text-gray-600 dark:text-gray-400">Giảng viên</p>
-                          <p className="text-gray-900 dark:text-black">{course.teacher}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center">
-                        <BookOpen className="h-4 w-4 mr-2 text-gray-500" />
-                        <div>
-                          <p className="text-gray-600 dark:text-gray-400">Mã lớp</p>
-                          <p className="text-gray-900 dark:text-black">{course.courseClassId}</p>
-                        </div>
-                      </div>
-                    </div>
+              <div className="grid grid-cols-7 gap-2 text-center text-sm font-medium text-gray-500 mb-2">
+                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d) => (
+                  <div key={d}>{d}</div>
+                ))}
+              </div>
+
+              <div className="space-y-2">
+                {visibleWeeks.map((week, wi) => (
+                  <div key={wi} className="grid grid-cols-7 gap-2">
+                    {week.map((day) => (
+                      <button
+                        key={day.dateString}
+                        onClick={() => setSelectedDate(day)}
+                        className={`relative p-2 rounded-full transition-all ${
+                          selectedDate?.dateString === day.dateString
+                            ? 'bg-blue-600 text-white'
+                            : day.date.toDateString() === today.toDateString()
+                            ? 'bg-blue-100 text-blue-800 font-semibold'
+                            : 'hover:bg-blue-50'
+                        }`}
+                      >
+                        {day.date.getDate()}
+                        {day.hasClass && (
+                          <span className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-yellow-400 rounded-full" />
+                        )}
+                      </button>
+                    ))}
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent> */}
 
-        {/* <TabsContent value="registrations" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Danh sách đăng ký</CardTitle>
-              <CardDescription>
-                Theo dõi trạng thái đăng ký các môn học
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {myRegistrations.map((registration) => (
-                  <div key={registration.registrationId} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-black">
-                          {registration.courseClass?.courseName}
-                        </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {registration.courseClass?.courseCode} • {registration.semester?.semesterName}
-                        </p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          Ngày đăng ký: {registration.registrationDate}
-                        </p>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Badge className={getStatusColor(registration.status)}>
-                          {getStatusText(registration.status)}
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+              {/* Nút mở rộng */}
+              <div className="text-center mt-4">
+                <Button variant="outline" size="sm" onClick={() => setShowAllWeeks(!showAllWeeks)}>
+                  {showAllWeeks ? 'Thu gọn lịch' : 'Xem thêm lịch'}
+                </Button>
               </div>
             </CardContent>
           </Card>
-        </TabsContent> */}
-      </Tabs>
+
+          {/* Chi tiết */}
+          {selectedDate && (
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle>
+                  {selectedDate.date.getDate()} tháng {selectedDate.date.getMonth() + 1},{' '}
+                  {selectedDate.date.getFullYear()}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {selectedCourses.length > 0 ? (
+                  selectedCourses.map((course, i) => (
+                    <div
+                      key={i}
+                      className="border-b border-gray-200 pb-3 mb-3 last:border-0 last:mb-0"
+                    >
+                      <h4 className="font-semibold text-gray-900">{course.courseName}</h4>
+                      <p className="text-sm text-gray-600">{course.courseCode}</p>
+                      <div className="flex items-center text-sm text-gray-500 mt-1">
+                        <Clock className="h-4 w-4 mr-1" /> {course.startTime} - {course.endTime}
+                      </div>
+                      <div className="flex items-center text-sm text-gray-500">
+                        <MapPin className="h-4 w-4 mr-1" /> {course.room}
+                      </div>
+                      <div className="flex items-center text-sm text-gray-500">
+                        <Users className="h-4 w-4 mr-1" /> {course.teacher}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500">Không có lịch học trong ngày này.</p>
+                )}
+              </CardContent>
+            </Card>
+          )}
+        </>
+      )}
     </div>
   );
 };

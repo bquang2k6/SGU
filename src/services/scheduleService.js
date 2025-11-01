@@ -10,23 +10,28 @@ class ScheduleService {
     try {
       const response = await apiService.get(API_ENDPOINTS.MY_SCHEDULE);
       const rawData = response.schedule || [];
-
-      // Chuẩn hóa dữ liệu để tương thích với SchedulePage.jsx
-      const normalizedData = rawData.map((item, index) => ({
-        courseClassId: item.courseClassId || `UNKNOWN-${index}`,
-        courseCode: item.courseCode || 'N/A',
-        courseName: item.courseName || 'Chưa rõ tên môn học',
-        subject: item.subject || 'Chưa rõ môn học',
-        credits: item.credits ?? 0,
-        room: item.room || 'Chưa có phòng',
-        teacher: item.teacher || 'Chưa có giảng viên',
-
-        // Thêm giá trị mặc định để tránh lỗi
-        dayOfWeek: item.dayOfWeek || 'monday',
-        startTime: item.startTime || '07:00',
-        endTime: item.endTime || '09:00',
-      }));
-
+  
+      const normalizedData = rawData.map((item, index) => {
+        // Ưu tiên dữ liệu trong item.schedule (nếu có)
+        const schedule = item.schedule || {};
+  
+        return {
+          courseClassId: item.courseClassId || `UNKNOWN-${index}`,
+          courseCode: item.courseCode || 'N/A',
+          courseName: item.courseName || 'Chưa rõ tên môn học',
+          subject: item.subject || 'Chưa rõ môn học',
+          credits: item.credits ?? 0,
+          room: item.room || 'Chưa có phòng',
+          teacher: item.teacher || 'Chưa có giảng viên',
+  
+          // Gộp lại từ cả 2 nguồn: item và item.schedule
+          dayOfWeek: schedule.dayOfWeek || item.dayOfWeek || 'monday',
+          startTime: schedule.startTime || item.startTime || '07:00',
+          endTime: schedule.endTime || item.endTime || '09:00',
+          datetime: schedule.datetime || item.schedule_datetime || null,
+        };
+      });
+  
       return {
         success: true,
         data: normalizedData,
@@ -39,7 +44,7 @@ class ScheduleService {
         data: [],
       };
     }
-  }
+  }  
 
   /**
    * Lấy danh sách đăng ký của sinh viên

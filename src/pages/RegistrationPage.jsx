@@ -171,7 +171,7 @@ const RegistrationPage = () => {
                     <div className="space-y-1">
                       <CardTitle className="text-lg">{course.courseName}</CardTitle>
                       <CardDescription className="text-sm">
-                        {course.courseCode} • {course.subject}
+                        {course.courseCode} • {course.subject?.subjectCode}
                       </CardDescription>
                     </div>
                     <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
@@ -184,12 +184,12 @@ const RegistrationPage = () => {
                     <div className="flex items-center text-sm">
                       <Users className="h-4 w-4 mr-2 text-gray-500" />
                       <span className="text-gray-600 dark:text-gray-400">Giảng viên:</span>
-                      <span className="ml-2 text-gray-900 dark:text-black">{course.teacher?.fullName}</span>
+                      <span className="ml-2 text-gray-900 dark:text-black">{course.teacher?.name}</span>
                     </div>
                     <div className="flex items-center text-sm">
                       <Calendar className="h-4 w-4 mr-2 text-gray-500" />
                       <span className="text-gray-600 dark:text-gray-400">Lịch học:</span>
-                      <span className="ml-2 text-gray-900 dark:text-black">{course.schedule}</span>
+                      <span className="ml-2 text-gray-900 dark:text-black">{course.schedule?.dayOfWeekDisplay} • {course.schedule?.time}</span>
                     </div>
                     <div className="flex items-center text-sm">
                       <MapPin className="h-4 w-4 mr-2 text-gray-500" />
@@ -199,7 +199,7 @@ const RegistrationPage = () => {
                     <div className="flex items-center text-sm">
                       <BookOpen className="h-4 w-4 mr-2 text-gray-500" />
                       <span className="text-gray-600 dark:text-gray-400">Tín chỉ:</span>
-                      <span className="ml-2 text-gray-900 dark:text-black">{course.credits}</span>
+                      <span className="ml-2 text-gray-900 dark:text-black">{course.subject?.credits}</span>
                     </div>
                   </div>
                   
@@ -228,8 +228,8 @@ const RegistrationPage = () => {
                       variant="outline"
                       className="w-full" 
                       size="sm"
-                      onClick={() => handleRegisterCourse(course.courseClassId, semesters[0]?.semesterId)}
-                      disabled={course.availableSlots === 0}
+                      onClick={() => handleRegisterCourse(course.courseClassId, course.semester?.semesterId || semesters[0]?.semesterId)}
+                      disabled={!course.canRegister || !course.registrationPeriod || course.availableSlots === 0}
                     >
                       Đăng ký
                     </Button>

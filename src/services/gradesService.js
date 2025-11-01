@@ -8,14 +8,20 @@ class GradesService {
       const response = await apiService.get(API_ENDPOINTS.MY_GRADES);
       return {
         success: true,
-        data: response.grades || []
+        data: {
+          grades: response.grades || [],
+          gpa: response.gpa ?? null,
+          totalCredits: response.totalCredits ?? null,
+          totalPassed: response.totalPassed ?? null,
+          totalGrades: response.totalGrades ?? null
+        }
       };
     } catch (error) {
       console.error('Get grades error:', error);
       return {
         success: false,
         message: error.message || 'Có lỗi xảy ra khi lấy danh sách điểm',
-        data: []
+        data: { grades: [] }
       };
     }
   }

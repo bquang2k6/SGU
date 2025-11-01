@@ -18,12 +18,23 @@ const DocumentsPage = () => {
     documentTypeId: '',
     semesterId: '',
     purpose: '',
-    studentIds: []
+    studentId: ''
   });
-
+  
   useEffect(() => {
+    // Lấy studentId từ localStorage khi mở trang
+    const savedStudent = localStorage.getItem('studentInfo');
+    if (savedStudent) {
+      const parsed = JSON.parse(savedStudent);
+      setCreateForm(prev => ({
+        ...prev,
+        studentIds: [parsed.studentId], // gắn studentId vào form
+      }));
+    }
+  
     fetchData();
   }, []);
+  
 
   const fetchData = async () => {
     try {
@@ -340,81 +351,99 @@ const DocumentsPage = () => {
 
       {/* Create Request Modal */}
       {showCreateForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <Card className="w-full max-w-2xl">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle>Tạo yêu cầu tài liệu mới</CardTitle>
-                  <CardDescription>Điền thông tin để tạo yêu cầu tài liệu</CardDescription>
-                </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => setShowCreateForm(false)}
-                >
-                  ×
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">ID yêu cầu</label>
-                  <input
-                    type="text"
-                    value={createForm.requestId}
-                    onChange={(e) => setCreateForm(prev => ({ ...prev, requestId: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Nhập ID yêu cầu"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">Loại tài liệu</label>
-                  <select
-                    value={createForm.documentTypeId}
-                    onChange={(e) => setCreateForm(prev => ({ ...prev, documentTypeId: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Chọn loại tài liệu</option>
-                    {documentTypes.map(type => (
-                      <option key={type.id} value={type.id}>{type.name}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">Học kỳ</label>
-                  <input
-                    type="text"
-                    value={createForm.semesterId}
-                    onChange={(e) => setCreateForm(prev => ({ ...prev, semesterId: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Nhập ID học kỳ"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">Mục đích</label>
-                  <input
-                    type="text"
-                    value={createForm.purpose}
-                    onChange={(e) => setCreateForm(prev => ({ ...prev, purpose: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Nhập mục đích sử dụng"
-                  />
-                </div>
-              </div>
-              <div className="flex space-x-3 pt-4">
-                <Button onClick={handleCreateRequest} className="flex-1">
-                  Tạo yêu cầu
-                </Button>
-                <Button variant="outline" onClick={() => setShowCreateForm(false)}>
-                  Hủy
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+    <Card className="w-full max-w-2xl">
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>Tạo yêu cầu tài liệu mới</CardTitle>
+            <CardDescription>Điền thông tin để tạo yêu cầu tài liệu</CardDescription>
+          </div>
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => setShowCreateForm(false)}
+          >
+            ×
+          </Button>
         </div>
-      )}
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* ID yêu cầu - tự động gắn từ typeId */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">ID yêu cầu</label>
+            <input
+              type="text"
+              value={createForm.requestId}
+              readOnly
+              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed"
+              placeholder="Tự động sinh theo loại tài liệu"
+            />
+          </div>
+
+          {/* Loại tài liệu */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Loại tài liệu</label>
+            <select
+              value={createForm.documentTypeId}
+              onChange={(e) => {
+                const selectedType = documentTypes.find(t => t.typeId === e.target.value);
+                setCreateForm(prev => ({
+                  ...prev,
+                  documentTypeId: selectedType?.typeId || '',
+                  requestId: selectedType ? `${selectedType.typeId}-REQ-${Date.now()}` : '', // sinh ID từ typeId
+                }));
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Chọn loại tài liệu</option>
+              {documentTypes.map(type => (
+                <option key={type.typeId} value={type.typeId}>
+                  {type.typeName}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Học kỳ */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Học kỳ</label>
+            <input
+              type="text"
+              value={createForm.semesterId}
+              onChange={(e) => setCreateForm(prev => ({ ...prev, semesterId: e.target.value }))}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Nhập ID học kỳ"
+            />
+          </div>
+
+          {/* Mục đích */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Mục đích</label>
+            <input
+              type="text"
+              value={createForm.purpose}
+              onChange={(e) => setCreateForm(prev => ({ ...prev, purpose: e.target.value }))}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Nhập mục đích sử dụng"
+            />
+          </div>
+        </div>
+
+        <div className="flex space-x-3 pt-4">
+          <Button onClick={handleCreateRequest} className="flex-1">
+            Tạo yêu cầu
+          </Button>
+          <Button variant="outline" onClick={() => setShowCreateForm(false)}>
+            Hủy
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  </div>
+)}
+
     </div>
   );
 };
