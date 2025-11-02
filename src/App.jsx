@@ -47,7 +47,7 @@ function App() {
   const renderPage = () => {
     switch (currentPage) {
       case 'home':
-        return <HomePage />;
+        return <HomePage onPageChange={setCurrentPage} />;
       case 'classes':
         return <ClassesPage />;
       case 'grades':

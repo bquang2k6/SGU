@@ -6,7 +6,7 @@ import { userService } from '../services/userService';
 import { notificationsService } from '../services/notificationsService';
 import { AuthStorage } from '../types/user';
 
-const HomePage = () => {
+const HomePage = ({ onPageChange }) => {
   const [userInfo, setUserInfo] = useState(null);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -57,17 +57,22 @@ const HomePage = () => {
       setLoading(false);
     }
   };
+  const handleFeatureClick = (featureId) => {
+    if (onPageChange) {
+      onPageChange(featureId);
+    }
+  };
 
   const features = [
-    { id: 'classes', title: 'Xem lớp học', description: 'Xem thông tin lớp học, lịch học và thời khóa biểu', icon: BookOpen, color: 'bg-blue-500', href: '/classes' },
-    { id: 'registration', title: 'Đăng ký môn học', description: 'Đăng ký và quản lý các môn học trong học kỳ', icon: BookOpen, color: 'bg-indigo-500', href: '/registration' },
-    { id: 'schedule', title: 'Lịch học', description: 'Xem lịch học và quản lý thời khóa biểu', icon: Calendar, color: 'bg-purple-500', href: '/schedule' },
-    { id: 'grades', title: 'Kết quả học tập', description: 'Theo dõi điểm số và bảng điểm', icon: Award, color: 'bg-green-500', href: '/grades' },
-    { id: 'documents', title: 'Đăng ký giấy tờ', description: 'Đăng ký các loại giấy tờ cần thiết', icon: FileText, color: 'bg-orange-500', href: '/documents' },
-    { id: 'tuition', title: 'Học phí', description: 'Xem và quản lý thông tin học phí', icon: TrendingUp, color: 'bg-yellow-500', href: '/tuition' },
-    { id: 'notifications', title: 'Thông báo', description: 'Xem thông báo mới từ trường', icon: Bell, color: 'bg-purple-500', href: '/notifications' },
-    { id: 'profile', title: 'Hồ sơ cá nhân', description: 'Cập nhật thông tin và đổi mật khẩu', icon: User, color: 'bg-pink-500', href: '/profile' },
-    { id: 'lookup', title: 'Tra cứu thông tin', description: 'Tra cứu khoa, ngành, lớp học và học kỳ', icon: BookOpen, color: 'bg-cyan-500', href: '/lookup' },
+    { id: 'classes', title: 'Xem lớp học', description: 'Xem thông tin lớp học, lịch học và thời khóa biểu', icon: BookOpen, color: 'bg-blue-500' },
+    { id: 'registration', title: 'Đăng ký môn học', description: 'Đăng ký và quản lý các môn học trong học kỳ', icon: BookOpen, color: 'bg-indigo-500' },
+    { id: 'schedule', title: 'Lịch học', description: 'Xem lịch học và quản lý thời khóa biểu', icon: Calendar, color: 'bg-purple-500' },
+    { id: 'documents', title: 'Đăng ký giấy tờ', description: 'Đăng ký các loại giấy tờ cần thiết', icon: FileText, color: 'bg-orange-500' },
+    { id: 'tuition', title: 'Học phí', description: 'Xem và quản lý thông tin học phí', icon: TrendingUp, color: 'bg-yellow-500' },
+    { id: 'notifications', title: 'Thông báo', description: 'Xem thông báo mới từ trường', icon: Bell, color: 'bg-purple-500' },
+    { id: 'profile', title: 'Hồ sơ cá nhân', description: 'Cập nhật thông tin và đổi mật khẩu', icon: User, color: 'bg-pink-500' },
+    { id: 'lookup', title: 'Tra cứu thông tin', description: 'Tra cứu khoa, ngành, lớp học và học kỳ', icon: BookOpen, color: 'bg-cyan-500' },
+    { id: 'progress', title: 'Tiến độ học', description: 'Xem lớp học đã hoàn thành và tiến độ học tập', icon: TrendingUp, color: 'bg-emerald-500' },
   ];
 
   const stats = [
@@ -118,7 +123,11 @@ const HomePage = () => {
               {features.map((feature) => {
                 const Icon = feature.icon;
                 return (
-                  <Card key={feature.id} className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
+                  <Card 
+                    key={feature.id} 
+                    className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group"
+                    onClick={() => handleFeatureClick(feature.id)}
+                  >
                     <CardHeader className="pb-3">
                       <div className="flex items-center space-x-3">
                         <div className={`p-2 rounded-lg ${feature.color} text-white`}>
