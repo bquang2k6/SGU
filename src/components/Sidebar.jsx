@@ -42,14 +42,15 @@ const Sidebar = ({
     { id: 'notifications', label: 'Nhận thông báo', icon: Bell, description: 'Xem thông báo và cập nhật mới' },
     { id: 'profile', label: 'Cập nhật thông tin cá nhân', icon: User, description: 'Thông tin cá nhân và đổi mật khẩu' },
     { id: 'lookup', label: 'Tra cứu', icon: Search, description: 'Tra cứu thông tin khoa, ngành, môn học' },
-    { id: 'tuition', label: 'Học phí', icon: DollarSign, description: 'Xem và thanh toán học phí' }
+    { id: 'tuition', label: 'Học phí', icon: DollarSign, description: 'Xem và thanh toán học phí' },
+    { id: 'logout', label: 'Đăng xuất', icon: LogOut, description: 'Đăng xuất khỏi hệ thống' }
   ];
 
   const actionItems = [
-    ...(showBack && onBack ? [{ id: 'back', label: 'Quay lại', icon: ArrowLeft, action: onBack, description: 'Quay về trang trước' }] : []),
-    ...(showRefresh && onRefresh ? [{ id: 'refresh', label: 'Làm mới', icon: RefreshCw, action: onRefresh, description: 'Tải lại dữ liệu' }] : []),
-    ...(onThemeToggle ? [{ id: 'theme', label: isDark ? 'Chế độ sáng' : 'Chế độ tối', icon: isDark ? Sun : Moon, action: onThemeToggle, description: 'Chuyển đổi chế độ sáng/tối (tạm thời ko hoạt động)' }] : []),
-    ...(isAuth && onLogout ? [{ id: 'logout', label: "Đăng xuất", icon: LogOut, action: onLogout, description: "Đăng xuất khỏi hệ thống" }] : [])
+    // ...(showBack && onBack ? [{ id: 'back', label: 'Quay lại', icon: ArrowLeft, action: onBack, description: 'Quay về trang trước' }] : []),
+    // ...(showRefresh && onRefresh ? [{ id: 'refresh', label: 'Làm mới', icon: RefreshCw, action: onRefresh, description: 'Tải lại dữ liệu' }] : []),
+    // ...(onThemeToggle ? [{ id: 'theme', label: isDark ? 'Chế độ sáng' : 'Chế độ tối', icon: isDark ? Sun : Moon, action: onThemeToggle, description: 'Chuyển đổi chế độ sáng/tối (tạm thời ko hoạt động)' }] : []),
+    // ...(isAuth && onLogout ? [{ id: 'logout', label: "Đăng xuất", icon: LogOut, action: onLogout, description: "Đăng xuất khỏi hệ thống" }] : [])
   ];
 
   return (
@@ -108,8 +109,12 @@ const Sidebar = ({
                       <button
                         key={item.id}
                         onClick={() => {
-                          onPageChange?.(item.id);
-                          if (window.innerWidth < 1024) onToggle?.();
+                          if (item.id === 'logout') {
+                            onLogout?.(); // gọi hàm đăng xuất
+                          } else {
+                            onPageChange?.(item.id); // chuyển trang bình thường
+                          }
+                          if (window.innerWidth < 1024) onToggle?.(); // đóng sidebar trên mobile
                         }}
                         className={cn(
                           "flex items-center gap-3 w-full p-3 rounded-lg transition-all group shadow-sm",
