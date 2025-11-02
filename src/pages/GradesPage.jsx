@@ -184,7 +184,7 @@ const GradesPage = () => {
       <Tabs defaultValue="subjects" className="space-y-4">
         <TabsList>
           <TabsTrigger value="subjects">Môn học</TabsTrigger>
-          <TabsTrigger value="detailed">Chi tiết điểm</TabsTrigger>
+          {/* <TabsTrigger value="detailed">Chi tiết điểm</TabsTrigger> */}
           <TabsTrigger value="transcript">Bảng điểm</TabsTrigger>
         </TabsList>
 
@@ -229,7 +229,7 @@ const GradesPage = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="detailed" className="space-y-4">
+        {/* <TabsContent value="detailed" className="space-y-4">
           <Card>
             <CardHeader>
               <CardTitle>Chi tiết điểm số</CardTitle>
@@ -309,7 +309,7 @@ const GradesPage = () => {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </TabsContent> */}
 
         <TabsContent value="transcript" className="space-y-4">
           <Card>
@@ -327,7 +327,7 @@ const GradesPage = () => {
                       <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-black">Môn học</th>
                       <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-black">Mã môn</th>
                       <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-black">Tín chỉ</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-black">Điểm</th>
+                      <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-black">Điểm tb</th>
                       <th className="text-left py-3 px-4 font-medium text-gray-900 dark:text-black">Xếp loại</th>
                     </tr>
                   </thead>
@@ -407,6 +407,24 @@ const GradesPage = () => {
                     <span className={`font-semibold ${getGradeColor(selectedSubject.finalScore)}`}>
                       {selectedSubject.finalScore?.toFixed(1) || 'N/A'}
                     </span>
+                  </div>
+                  <div className="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-100 rounded">
+                    <span className="text-sm font-medium text-gray-900 dark:text-black">Điểm trung bình</span>
+                    <span className={`font-semibold ${getGradeColor(selectedSubject.averageScore)}`}>
+                      {selectedSubject.averageScore?.toFixed(1) || 'N/A'}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-100 rounded">
+                    <span className="text-sm font-medium text-gray-900 dark:text-black">Điểm hệ 4</span>
+                    <span className="font-semibold text-blue-600 dark:text-blue-400">
+                      {selectedSubject.gradePoint?.toFixed(1) || 'N/A'}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-100 rounded">
+                    <span className="text-sm font-medium text-gray-900 dark:text-black">Trạng thái</span>
+                    <Badge className={selectedSubject.isPassed ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                      {selectedSubject.isPassed ? 'Đạt' : 'Không đạt'}
+                    </Badge>
                   </div>
                 </div>
               </div>

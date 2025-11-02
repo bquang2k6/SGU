@@ -180,6 +180,39 @@ const TuitionPage = () => {
         </Card>
       </div>
 
+      {/* Banking Information */}
+      <Card className="bg-blue-50 border-blue-200">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-blue-900">
+            <CreditCard className="h-5 w-5" />
+            Thông tin chuyển khoản
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="bg-white rounded-lg p-4 border border-blue-200">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700">Ngân hàng:</span>
+                <span className="text-sm font-semibold text-gray-900">SGU</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700">Số tài khoản:</span>
+                <span className="text-sm font-semibold text-blue-600 font-mono">0000000000000000</span>
+              </div>
+              <div className="pt-2 mt-2 border-t border-gray-200 space-y-2">
+                <p className="text-xs text-gray-600">
+                  <strong>Lưu ý:</strong> Vui lòng ghi rõ nội dung chuyển khoản: <span className="font-semibold">Học phí - Mã số sinh viên - Học kỳ</span>
+                </p>
+                <div className="flex items-center gap-2 pt-2">
+                  <span className="text-xs font-medium text-gray-700">Hoặc đóng trực tiếp tại:</span>
+                  <span className="text-xs font-semibold text-blue-600">Phòng Tài chính A.001</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <Tabs defaultValue="all" className="space-y-4">
       {/* <div className="overflow-x-auto scrollbar-hide">
         <TabsList className="flex sm:grid sm:grid-cols-4 bg-gray-50 dark:bg-white-100/30 rounded-lg p-1 gap-0 min-w-max sm:min-w-0">

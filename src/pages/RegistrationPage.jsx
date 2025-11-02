@@ -8,20 +8,18 @@ import { registrationService } from '../services/registrationService';
 import { readOnlyService } from '../services/readOnlyService';
 import { toast } from 'react-hot-toast';
 import { scheduleService } from '../services/scheduleService';
+import { AuthStorage } from '../types/user';
 
 const RegistrationPage = () => {
   const [availableCourses, setAvailableCourses] = useState([]);
   const [myRegistrations, setMyRegistrations] = useState([]);
-  const [semesters, setSemesters] = useState([]);
+  const [semesterInfo, setSemesterInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [showPrerequisites, setShowPrerequisites] = useState(false);
   const [showScheduleConflict, setShowScheduleConflict] = useState(false);
   const [prerequisitesResult, setPrerequisitesResult] = useState(null);
   const [scheduleConflictResult, setScheduleConflictResult] = useState(null);
-
-  // Mock student ID - trong thực tế sẽ lấy từ auth context
-  const studentId = 'STU001';
 
   useEffect(() => {
     fetchData();
@@ -30,22 +28,40 @@ const RegistrationPage = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [coursesResult, registrationsResult, semestersResult] = await Promise.all([
-        registrationService.getAvailableCourses(studentId),
-        scheduleService.getMyRegistrations(),
-        readOnlyService.getSemesters()
+      
+      // Kiểm tra user có đăng nhập không
+      const currentUser = AuthStorage.getCurrentUser();
+      console.log('🔍 Current user in RegistrationPage:', currentUser);
+      console.log('🔍 localStorage sgu_user:', localStorage.getItem('sgu_user'));
+      
+      if (!currentUser || !currentUser.username) {
+        toast.error('Vui lòng đăng nhập để xem môn học');
+        setLoading(false);
+        return;
+      }
+      
+      const [coursesResult, registrationsResult] = await Promise.all([
+        registrationService.getAvailableCourses(),
+        scheduleService.getMyRegistrations()
       ]);
 
       if (coursesResult.success) {
-        setAvailableCourses(coursesResult.data);
+        console.log('📚 Courses result:', coursesResult.data);
+        const courses = coursesResult.data.courses || coursesResult.data || [];
+        console.log('📚 Parsed courses:', courses);
+        console.log('📚 Number of courses:', courses.length);
+        setAvailableCourses(courses);
+        // Lưu semester info từ response
+        if (coursesResult.data.semester) {
+          setSemesterInfo(coursesResult.data.semester);
+        }
+      } else {
+        console.error('❌ Failed to load courses:', coursesResult);
+        toast.error(coursesResult.message || 'Không thể tải danh sách môn học');
       }
 
       if (registrationsResult.success) {
         setMyRegistrations(registrationsResult.data);
-      }
-
-      if (semestersResult.success) {
-        setSemesters(semestersResult.data);
       }
     } catch (error) {
       console.error('Lỗi tải dữ liệu:', error);
@@ -55,24 +71,37 @@ const RegistrationPage = () => {
     }
   };
 
-  const handleCheckPrerequisites = async (courseClassId, subjectId) => {
-    try {
-      const result = await registrationService.checkPrerequisites(studentId, subjectId);
-      if (result.success) {
-        setPrerequisitesResult(result.data);
-        setShowPrerequisites(true);
-      } else {
-        toast.error(result.message);
+  const handleCheckPrerequisites = async (course) => {
+    // Hiển thị prerequisites từ course data (đã có trong response)
+    if (course.prerequisites && course.prerequisites.length > 0) {
+      const prerequisitesInfo = {
+        prerequisites: course.prerequisites,
+        prerequisitesMet: course.prerequisitesMet,
+        canRegister: course.canRegister,
+        missingPrerequisites: course.prerequisites.filter(p => !p.met)
+      };
+      setPrerequisitesResult(prerequisitesInfo);
+      setShowPrerequisites(true);
+    } else {
+      // Nếu không có prerequisites trong course, gọi API
+      try {
+        const result = await registrationService.checkPrerequisites(course.subject?.subjectId);
+        if (result.success) {
+          setPrerequisitesResult(result.data);
+          setShowPrerequisites(true);
+        } else {
+          toast.error(result.message);
+        }
+      } catch (error) {
+        console.error('Lỗi kiểm tra môn tiên quyết:', error);
+        toast.error('Có lỗi xảy ra khi kiểm tra môn tiên quyết');
       }
-    } catch (error) {
-      console.error('Lỗi kiểm tra môn tiên quyết:', error);
-      toast.error('Có lỗi xảy ra khi kiểm tra môn tiên quyết');
     }
   };
 
   const handleCheckScheduleConflict = async (courseClassId) => {
     try {
-      const result = await registrationService.checkScheduleConflict(studentId, courseClassId);
+      const result = await registrationService.checkScheduleConflict(courseClassId);
       if (result.success) {
         setScheduleConflictResult(result.data);
         setShowScheduleConflict(true);
@@ -85,13 +114,24 @@ const RegistrationPage = () => {
     }
   };
 
-  const handleRegisterCourse = async (courseClassId, semesterId) => {
+  const handleRegisterCourse = async (course) => {
+    if (!course.canRegister) {
+      if (!course.prerequisitesMet) {
+        toast.error('Chưa đáp ứng môn tiên quyết');
+      } else if (!course.registrationPeriod) {
+        toast.error('Không trong thời gian đăng ký');
+      } else if (course.availableSlots <= 0) {
+        toast.error('Môn học đã hết chỗ');
+      } else {
+        toast.error('Không thể đăng ký môn học này');
+      }
+      return;
+    }
+
     try {
       const registrationData = {
-        registrationId: `REG_${Date.now()}`,
-        studentId: studentId,
-        courseClassId: courseClassId,
-        semesterId: semesterId
+        courseClassId: course.courseClassId,
+        semesterId: course.semester?.semesterId || semesterInfo?.semesterId
       };
 
       const result = await registrationService.createRegistration(registrationData);
@@ -99,7 +139,7 @@ const RegistrationPage = () => {
         toast.success('Đăng ký môn học thành công');
         fetchData(); // Refresh data
       } else {
-        toast.error(result.message);
+        toast.error(result.message || 'Có lỗi xảy ra khi đăng ký');
       }
     } catch (error) {
       console.error('Lỗi đăng ký môn học:', error);
@@ -160,84 +200,192 @@ const RegistrationPage = () => {
         </TabsList>
 
         <TabsContent value="available" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {availableCourses.map((course) => (
-              <Card 
-                key={course.courseClassId} 
-                className="hover:shadow-lg transition-shadow"
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <CardTitle className="text-lg">{course.courseName}</CardTitle>
-                      <CardDescription className="text-sm">
-                        {course.courseCode} • {course.subject?.subjectCode}
-                      </CardDescription>
-                    </div>
-                    <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                      {course.availableSlots}/{course.maxStudents} chỗ
-                    </Badge>
+          {semesterInfo && (
+            <Card className="mb-4">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-semibold text-lg">{semesterInfo.semesterName}</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {semesterInfo.isRegistrationOpen ? (
+                        <span className="text-green-600">✓ Đang mở đăng ký</span>
+                      ) : (
+                        <span className="text-red-600">✗ Chưa mở đăng ký</span>
+                      )}
+                    </p>
                   </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="space-y-2">
-                    <div className="flex items-center text-sm">
-                      <Users className="h-4 w-4 mr-2 text-gray-500" />
-                      <span className="text-gray-600 dark:text-gray-400">Giảng viên:</span>
-                      <span className="ml-2 text-gray-900 dark:text-black">{course.teacher?.name}</span>
+                  <Badge className={semesterInfo.isRegistrationOpen ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                    {semesterInfo.isRegistrationOpen ? 'Mở' : 'Đóng'}
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          
+          {availableCourses.length === 0 ? (
+            <Card>
+              <CardContent className="pt-6 text-center py-10">
+                <p className="text-gray-600 dark:text-gray-400">
+                  {semesterInfo && !semesterInfo.isRegistrationOpen 
+                    ? 'Chưa đến thời gian đăng ký' 
+                    : 'Không có môn học nào có thể đăng ký'}
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {availableCourses.map((course) => (
+                <Card 
+                  key={course.courseClassId} 
+                  className={`hover:shadow-lg transition-shadow ${
+                    !course.canRegister ? 'opacity-75' : ''
+                  }`}
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-1 flex-1">
+                        <CardTitle className="text-lg">{course.courseName}</CardTitle>
+                        <CardDescription className="text-sm">
+                          {course.courseCode} • {course.subject?.subjectName || course.subject}
+                        </CardDescription>
+                      </div>
+                      <Badge className={`${
+                        course.availableSlots > 0 
+                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
+                          : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+                      }`}>
+                        {course.availableSlots}/{course.maxStudents} chỗ
+                      </Badge>
                     </div>
-                    <div className="flex items-center text-sm">
-                      <Calendar className="h-4 w-4 mr-2 text-gray-500" />
-                      <span className="text-gray-600 dark:text-gray-400">Lịch học:</span>
-                      <span className="ml-2 text-gray-900 dark:text-black">{course.schedule?.dayOfWeekDisplay} • {course.schedule?.time}</span>
+                    {course.prerequisites && course.prerequisites.length > 0 && (
+                      <div className="mt-2">
+                        {course.prerequisitesMet ? (
+                          <Badge className="bg-green-100 text-green-800 text-xs">
+                            <CheckCircle className="h-3 w-3 mr-1 inline" />
+                            Đã đáp ứng tiên quyết
+                          </Badge>
+                        ) : (
+                          <Badge className="bg-yellow-100 text-yellow-800 text-xs">
+                            <AlertTriangle className="h-3 w-3 mr-1 inline" />
+                            Chưa đáp ứng tiên quyết
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="space-y-2">
+                      <div className="flex items-center text-sm">
+                        <Users className="h-4 w-4 mr-2 text-gray-500" />
+                        <span className="text-gray-600 dark:text-gray-400">Giảng viên:</span>
+                        <span className="ml-2 text-gray-900 dark:text-black">
+                          {course.teacher?.name || course.teacher?.fullName || 'TBA'}
+                        </span>
+                      </div>
+                      {(() => {
+                        const formatSchedule = (schedule) => {
+                          if (!schedule) return null;
+                          
+                          const dayMap = {
+                            'monday': 'Thứ 2',
+                            'tuesday': 'Thứ 3',
+                            'wednesday': 'Thứ 4',
+                            'thursday': 'Thứ 5',
+                            'friday': 'Thứ 6',
+                            'saturday': 'Thứ 7',
+                            'sunday': 'Chủ nhật',
+                            'Monday': 'Thứ 2',
+                            'Tuesday': 'Thứ 3',
+                            'Wednesday': 'Thứ 4',
+                            'Thursday': 'Thứ 5',
+                            'Friday': 'Thứ 6',
+                            'Saturday': 'Thứ 7',
+                            'Sunday': 'Chủ nhật'
+                          };
+                          
+                          const dayOfWeek = schedule.dayOfWeekDisplay || schedule.dayOfWeek || '';
+                          const dayName = dayMap[dayOfWeek] || dayMap[dayOfWeek?.charAt(0).toUpperCase() + dayOfWeek?.slice(1)] || dayOfWeek;
+                          const startTime = schedule.startTime || '';
+                          const endTime = schedule.endTime || '';
+                          
+                          if (dayName && startTime) {
+                            return endTime 
+                              ? `${dayName}, ${startTime} - ${endTime}`
+                              : `${dayName}, ${startTime}`;
+                          }
+                          
+                          return schedule.time || 'Chưa có lịch';
+                        };
+                        
+                        const scheduleText = formatSchedule(course.schedule);
+                        
+                        return (
+                          <div className="flex items-center text-sm">
+                            <Calendar className="h-4 w-4 mr-2 text-gray-500" />
+                            <span className="text-gray-600 dark:text-gray-400">Lịch học:</span>
+                            <span className="ml-2 font-medium text-gray-900 dark:text-black">
+                              {scheduleText || 'Chưa có lịch'}
+                            </span>
+                          </div>
+                        );
+                      })()}
+                      <div className="flex items-center text-sm">
+                        <MapPin className="h-4 w-4 mr-2 text-gray-500" />
+                        <span className="text-gray-600 dark:text-gray-400">Phòng:</span>
+                        <span className="ml-2 text-gray-900 dark:text-black">{course.room}</span>
+                      </div>
+                      <div className="flex items-center text-sm">
+                        <BookOpen className="h-4 w-4 mr-2 text-gray-500" />
+                        <span className="text-gray-600 dark:text-gray-400">Tín chỉ:</span>
+                        <span className="ml-2 text-gray-900 dark:text-black">
+                          {course.subject?.credits || course.credits}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex items-center text-sm">
-                      <MapPin className="h-4 w-4 mr-2 text-gray-500" />
-                      <span className="text-gray-600 dark:text-gray-400">Phòng:</span>
-                      <span className="ml-2 text-gray-900 dark:text-black">{course.room}</span>
-                    </div>
-                    <div className="flex items-center text-sm">
-                      <BookOpen className="h-4 w-4 mr-2 text-gray-500" />
-                      <span className="text-gray-600 dark:text-gray-400">Tín chỉ:</span>
-                      <span className="ml-2 text-gray-900 dark:text-black">{course.subject?.credits}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="pt-3 border-t border-gray-200 dark:border-gray-700 space-y-2">
-                    <div className="flex space-x-2">
+                    
+                    <div className="pt-3 border-t border-gray-200 dark:border-gray-700 space-y-2">
+                      <div className="flex space-x-2">
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="flex-1"
+                          onClick={() => handleCheckPrerequisites(course)}
+                        >
+                          <CheckCircle className="h-4 w-4 mr-1" />
+                          Tiên quyết
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="flex-1"
+                          onClick={() => handleCheckScheduleConflict(course.courseClassId)}
+                        >
+                          <Clock className="h-4 w-4 mr-1" />
+                          Kiểm tra lịch
+                        </Button>
+                      </div>
                       <Button 
-                        size="sx" 
-                        variant="outline" 
-                        className="flex-1"
-                        onClick={() => handleCheckPrerequisites(course.courseClassId, course.subject?.subjectId)}
+                        variant={course.canRegister ? "default" : "outline"}
+                        className="w-full" 
+                        size="sm"
+                        onClick={() => handleRegisterCourse(course)}
+                        disabled={!course.canRegister}
                       >
-                        <CheckCircle className="h-4 w-4 mr-1" />
-                        Kiểm tra tiên quyết
+                        {course.canRegister ? 'Đăng ký' : 'Không thể đăng ký'}
                       </Button>
-                      <Button 
-                        size="sx" 
-                        variant="outline" 
-                        className="flex-1"
-                        onClick={() => handleCheckScheduleConflict(course.courseClassId)}
-                      >
-                        <Clock className="h-4 w-4 mr-1" />
-                        Kiểm tra lịch
-                      </Button>
+                      {!course.canRegister && (
+                        <p className="text-xs text-red-600 dark:text-red-400 text-center">
+                          {!course.prerequisitesMet && 'Chưa đáp ứng tiên quyết'}
+                          {course.prerequisitesMet && !course.registrationPeriod && 'Chưa đến thời gian đăng ký'}
+                          {course.prerequisitesMet && course.registrationPeriod && course.availableSlots <= 0 && 'Đã hết chỗ'}
+                        </p>
+                      )}
                     </div>
-                    <Button 
-                      variant="outline"
-                      className="w-full" 
-                      size="sm"
-                      onClick={() => handleRegisterCourse(course.courseClassId, course.semester?.semesterId || semesters[0]?.semesterId)}
-                      disabled={!course.canRegister || !course.registrationPeriod || course.availableSlots === 0}
-                    >
-                      Đăng ký
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="registered" className="space-y-4">
@@ -313,8 +461,40 @@ const RegistrationPage = () => {
                 </span>
               </div>
               
-              {prerequisitesResult.missingPrerequisites && prerequisitesResult.missingPrerequisites.length > 0 && (
+              {prerequisitesResult.prerequisites && prerequisitesResult.prerequisites.length > 0 && (
                 <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-black mb-2">
+                    Danh sách môn tiên quyết:
+                  </h3>
+                  <div className="space-y-2">
+                    {prerequisitesResult.prerequisites.map((prereq, index) => (
+                      <div key={index} className={`flex items-center space-x-2 p-2 rounded ${
+                        prereq.met 
+                          ? 'bg-green-50 dark:bg-green-900/20' 
+                          : 'bg-red-50 dark:bg-red-900/20'
+                      }`}>
+                        {prereq.met ? (
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <XCircle className="h-4 w-4 text-red-500" />
+                        )}
+                        <span className={`text-sm ${
+                          prereq.met 
+                            ? 'text-green-600 dark:text-green-400' 
+                            : 'text-red-600 dark:text-red-400'
+                        }`}>
+                          {prereq.subjectName} ({prereq.subjectCode}) - {
+                            prereq.met ? 'Đã đáp ứng' : 'Chưa đáp ứng'
+                          }
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {prerequisitesResult.missingPrerequisites && prerequisitesResult.missingPrerequisites.length > 0 && (
+                <div className="mt-4">
                   <h3 className="font-semibold text-gray-900 dark:text-black mb-2">
                     Môn học tiên quyết còn thiếu:
                   </h3>
